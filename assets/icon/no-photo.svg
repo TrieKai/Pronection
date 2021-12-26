@@ -1,0 +1,15 @@
+<svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg" class="svg-no_photo">
+  <rect width="96" height="96" rx="48" fill="url(#pattern0)" />
+  <rect x="0.5" y="0.5" width="95" height="95" rx="47.5" stroke="#B4C2C8" stroke-opacity="0.2" />
+  <g clip-path="url(#clip0)">
+    <circle cx="48" cy="48" r="48" fill="#93A7AE" />
+    <ellipse cx="48" cy="31" rx="18" ry="18" fill="#FAFDFF" />
+    <ellipse cx="48" cy="101" rx="48" ry="43" fill="#FAFDFF" />
+    <path d="M96 48C96 74.5097 74.5097 96 48 96C21.4903 96 0 74.5097 0 48C0 21.4903 21.4903 0 48 0C74.5097 0 96 21.4903 96 48ZM2.88 48C2.88 72.9191 23.0809 93.12 48 93.12C72.9191 93.12 93.12 72.9191 93.12 48C93.12 23.0809 72.9191 2.88 48 2.88C23.0809 2.88 2.88 23.0809 2.88 48Z" fill="#93A7AE" />
+  </g>
+  <defs>
+    <clipPath id="clip0">
+      <path d="M0 48C0 21.4903 21.4903 0 48 0C74.5097 0 96 21.4903 96 48C96 74.5097 74.5097 96 48 96C21.4903 96 0 74.5097 0 48Z" fill="white" />
+    </clipPath>
+  </defs>
+</svg>

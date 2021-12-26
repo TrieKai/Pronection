@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="svg-close">
+  <defs>
+    <style>
+      .svg-close .cls-1 {
+        fill: none;
+      }
+      .svg-close .cls-2 {
+        fill: #fff;
+      }
+    </style>
+  </defs>
+  <title>close</title>
+  <g>
+    <rect class="cls-1" data-class="cls-1" width="24" height="24" />
+    <path class="cls-2" data-class="cls-2" d="M7.23,5.38,12,10.15l4.77-4.77a1.31,1.31,0,1,1,1.85,1.85L13.85,12l4.77,4.77a1.31,1.31,0,0,1-1.85,1.85L12,13.85,7.23,18.62a1.31,1.31,0,1,1-1.85-1.85L10.15,12,5.38,7.23A1.31,1.31,0,1,1,7.23,5.38Z" />
+  </g>
+</svg>
