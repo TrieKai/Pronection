@@ -1,6 +1,5 @@
 import { VFC } from 'react'
 import styled from 'styled-components'
-// import { ReactComponent as DefaultAvatarImage } from 'assets/icon/no-photo.svg'
 
 interface IMessageContainerStyles {
   isSelf: boolean
@@ -8,6 +7,7 @@ interface IMessageContainerStyles {
 
 interface IMessage {
   isSelf: boolean
+  userAvatarUrl: string
   text: string
   time: number
 }
@@ -15,22 +15,25 @@ interface IMessage {
 const MessageContainer = styled.div<IMessageContainerStyles>`
   display: grid;
   grid-template-areas: ${({ isSelf }) =>
-    isSelf ? '"time message avatar"' : '"avatar message time"'};
+    isSelf ? '". time message avatar"' : '"avatar message time ."'};
   grid-template-columns: ${({ isSelf }) =>
-    isSelf ? 'auto min-content 40px' : '40px min-content auto'};
+    isSelf ? '1fr auto min-content 42px' : '42px min-content auto 1fr'};
   grid-template-rows: minmax(38px, auto);
   justify-content: ${({ isSelf }) => (isSelf ? 'flex-end' : 'flex-start')};
-  margin: 4px;
+  padding: 4px;
   width: 100%;
 
   .avatar {
     grid-area: avatar;
+    padding-right: ${({ isSelf }) => (isSelf ? 'unset' : '4px')};
+    padding-left: ${({ isSelf }) => (isSelf ? '4px' : 'unset')};
     width: 100%;
     height: 100%;
 
-    svg {
-      width: 40px;
-      height: 40px;
+    img {
+      width: 38px;
+      height: 38px;
+      border-radius: 100%;
     }
   }
 
@@ -47,6 +50,7 @@ const MessageContainer = styled.div<IMessageContainerStyles>`
       line-height: 22px;
       background: ${({ isSelf }) => (isSelf ? '#91a0fb' : '#e5eaec')};
       color: ${({ isSelf }) => (isSelf ? '#fafafa' : '#314146')};
+      word-break: break-word;
     }
   }
 
@@ -60,10 +64,12 @@ const MessageContainer = styled.div<IMessageContainerStyles>`
   }
 `
 
-const Message: VFC<IMessage> = ({ isSelf, text, time }) => {
+const Message: VFC<IMessage> = ({ isSelf, userAvatarUrl, text, time }) => {
   return (
     <MessageContainer isSelf={isSelf}>
-      <span className='avatar'>{/* <DefaultAvatarImage /> */}</span>
+      <span className='avatar'>
+        <img src={userAvatarUrl} alt='avatar' />
+      </span>
       <div className='message'>
         <div className='text'>{text}</div>
       </div>
