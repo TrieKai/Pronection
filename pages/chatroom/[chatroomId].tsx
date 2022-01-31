@@ -1,0 +1,200 @@
+import { createRef, useCallback, useEffect, useRef, useState } from 'react'
+import { useRouter } from 'next/router'
+import {
+  arrayUnion,
+  doc,
+  GeoPoint,
+  getFirestore,
+  onSnapshot,
+  updateDoc
+} from 'firebase/firestore'
+import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
+import styled from 'styled-components'
+import Message from 'components/message'
+import MessageInputArea from 'components/messageInputArea'
+import { ReactComponent as ArrowIcon } from 'assets/icon/arrow.svg'
+
+const DEFAULT_CHATROOM_DATA: FirebaseChatroom = {
+  create_at: 0,
+  messages: [],
+  name: '',
+  position: new GeoPoint(0, 0),
+  users: []
+}
+
+interface IMessage {
+  user_id: string
+  user_name: string
+  text: string
+  timestamp: number
+}
+
+interface FirebaseChatroom {
+  create_at: number
+  messages: IMessage[]
+  name: string
+  position: GeoPoint
+  users: {
+    id: string
+    photo_url: string
+  }[]
+}
+
+const ChatroomContainer = styled.div`
+  padding: 16px;
+  width: 100%;
+  height: calc(100% - 64px - 56px);
+  background: #f5f8f9;
+  overflow-y: auto;
+`
+
+const ChatroomHeader = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 64px;
+
+  .back-icon {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+
+    svg {
+      width: 100%;
+      height: 100%;
+      transform: scaleX(-1);
+
+      [data-class='cls-2'] {
+        fill: #314146;
+      }
+    }
+  }
+
+  .chatroom-name {
+    margin-left: 8px;
+    font-size: 32px;
+    font-weight: 600;
+  }
+`
+
+const provider = new GoogleAuthProvider()
+
+const Chatroom = () => {
+  const {
+    query: { chatroomId },
+    push
+  } = useRouter()
+  const auth = getAuth()
+  const db = getFirestore()
+  const firstRender = useRef<boolean>(true)
+  const [uid, setUid] = useState<string>('')
+  const [users, setUsers] = useState<{ uid: string; photoUrl: string }>()
+  const [comment, setComment] = useState<string>('')
+  const [chatroomData, setChatroomData] = useState<FirebaseChatroom>(
+    DEFAULT_CHATROOM_DATA
+  )
+  const messageRefs = useRef<(HTMLDivElement | null)[]>([])
+
+  const scrollToLatestMessage = useCallback(() => {
+    messageRefs.current[messageRefs.current.length - 1]?.scrollIntoView({
+      behavior: 'smooth'
+    })
+  }, [])
+
+  const sendMessage: React.MouseEventHandler<HTMLSpanElement> =
+    useCallback(async () => {
+      if (comment === '') return
+
+      console.log(auth.currentUser, uid)
+      if (auth.currentUser && uid !== '') {
+        await updateDoc(doc(db, 'chatrooms', chatroomId as string), {
+          users: arrayUnion({ id: uid, photo_url: auth.currentUser.photoURL }),
+          messages: arrayUnion({
+            user_id: uid,
+            user_name: '',
+            text: comment,
+            timestamp: Date.now()
+          })
+        })
+        setComment('')
+      }
+    }, [auth, db, uid, chatroomId, comment])
+
+  useEffect(() => {
+    if (chatroomId) {
+      const unsubscribe = onSnapshot(
+        doc(db, 'chatrooms', chatroomId as string),
+        doc => {
+          console.log('Current data: ', doc.data())
+          const data = doc.data() as FirebaseChatroom
+          setChatroomData(data)
+        }
+      )
+
+      return () => unsubscribe()
+    }
+  }, [db, chatroomId])
+
+  useEffect(() => {
+    messageRefs.current = Array(chatroomData.messages.length)
+      .fill(null)
+      .map((_, i) => {
+        const messagesLength = chatroomData.messages.length
+        if (firstRender.current) {
+          if (messagesLength - 1 === i) {
+            firstRender.current = false
+            scrollToLatestMessage()
+          }
+        } else {
+          if (
+            messagesLength - 1 === i &&
+            chatroomData.messages[messagesLength - 1].user_id === uid
+          )
+            scrollToLatestMessage()
+        }
+
+        return messageRefs.current[i] || createRef<HTMLDivElement>().current
+      })
+  }, [chatroomData.messages, uid, scrollToLatestMessage])
+
+  useEffect(() => {
+    if (uid === '' && !auth.currentUser) {
+      signInWithPopup(auth, provider).then(result => {
+        setUid(result.user.uid)
+      })
+    }
+  }, [uid, auth])
+
+  return (
+    <>
+      <ChatroomHeader>
+        <span className='back-icon'>
+          <ArrowIcon onClick={() => push('/')} />
+        </span>
+        <span className='chatroom-name'>{chatroomData.name}</span>
+      </ChatroomHeader>
+      <ChatroomContainer>
+        {chatroomData.messages.map((message, i) => (
+          <Message
+            ref={el => (messageRefs.current[i] = el)}
+            isSelf={message.user_id === uid}
+            userAvatarUrl={
+              chatroomData.users.find(item => item.id === message.user_id)
+                ?.photo_url ?? ''
+            }
+            text={message.text}
+            time={message.timestamp}
+            key={i}
+          />
+        ))}
+      </ChatroomContainer>
+      <MessageInputArea
+        comment={comment}
+        setComment={setComment}
+        sendMessage={sendMessage}
+      />
+    </>
+  )
+}
+
+export default Chatroom

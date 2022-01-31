@@ -1,4 +1,5 @@
-import { VFC } from 'react'
+/* eslint-disable @next/next/no-img-element */
+import { forwardRef } from 'react'
 import styled from 'styled-components'
 
 interface IMessageContainerStyles {
@@ -64,18 +65,21 @@ const MessageContainer = styled.div<IMessageContainerStyles>`
   }
 `
 
-const Message: VFC<IMessage> = ({ isSelf, userAvatarUrl, text, time }) => {
-  return (
-    <MessageContainer isSelf={isSelf}>
-      <span className='avatar'>
-        <img src={userAvatarUrl} alt='avatar' />
-      </span>
-      <div className='message'>
-        <div className='text'>{text}</div>
-      </div>
-      <div className='time'>{new Date(time).toLocaleTimeString()}</div>
-    </MessageContainer>
-  )
-}
+const Message = forwardRef<HTMLDivElement, IMessage>(
+  ({ isSelf, userAvatarUrl, text, time }, ref) => {
+    return (
+      <MessageContainer ref={ref} isSelf={isSelf}>
+        <span className='avatar'>
+          <img src={userAvatarUrl} alt='avatar' />
+        </span>
+        <div className='message'>
+          <div className='text'>{text}</div>
+        </div>
+        <div className='time'>{new Date(time).toLocaleTimeString()}</div>
+      </MessageContainer>
+    )
+  }
+)
+Message.displayName = 'message'
 
 export default Message
