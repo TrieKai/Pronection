@@ -8,36 +8,25 @@ import {
   onSnapshot,
   updateDoc
 } from 'firebase/firestore'
-import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
+import {
+  getAuth,
+  GoogleAuthProvider,
+  onAuthStateChanged,
+  signInWithPopup
+} from 'firebase/auth'
 import styled from 'styled-components'
 import Message from 'components/message'
 import MessageInputArea from 'components/messageInputArea'
 import { ReactComponent as ArrowIcon } from 'assets/icon/arrow.svg'
 
-const DEFAULT_CHATROOM_DATA: FirebaseChatroom = {
+import { IFirebaseChatroom } from 'types/common'
+
+const DEFAULT_CHATROOM_DATA: IFirebaseChatroom = {
   create_at: 0,
   messages: [],
   name: '',
   position: new GeoPoint(0, 0),
   users: []
-}
-
-interface IMessage {
-  user_id: string
-  user_name: string
-  text: string
-  timestamp: number
-}
-
-interface FirebaseChatroom {
-  create_at: number
-  messages: IMessage[]
-  name: string
-  position: GeoPoint
-  users: {
-    id: string
-    photo_url: string
-  }[]
 }
 
 const ChatroomContainer = styled.div`
@@ -85,12 +74,12 @@ const Chatroom = () => {
     push
   } = useRouter()
   const auth = getAuth()
+  // console.log(auth)
   const db = getFirestore()
   const firstRender = useRef<boolean>(true)
   const [uid, setUid] = useState<string>('')
-  const [users, setUsers] = useState<{ uid: string; photoUrl: string }>()
   const [comment, setComment] = useState<string>('')
-  const [chatroomData, setChatroomData] = useState<FirebaseChatroom>(
+  const [chatroomData, setChatroomData] = useState<IFirebaseChatroom>(
     DEFAULT_CHATROOM_DATA
   )
   const messageRefs = useRef<(HTMLDivElement | null)[]>([])
@@ -111,7 +100,7 @@ const Chatroom = () => {
           users: arrayUnion({ id: uid, photo_url: auth.currentUser.photoURL }),
           messages: arrayUnion({
             user_id: uid,
-            user_name: '',
+            user_name: auth.currentUser.displayName,
             text: comment,
             timestamp: Date.now()
           })
@@ -126,7 +115,7 @@ const Chatroom = () => {
         doc(db, 'chatrooms', chatroomId as string),
         doc => {
           console.log('Current data: ', doc.data())
-          const data = doc.data() as FirebaseChatroom
+          const data = doc.data() as IFirebaseChatroom
           setChatroomData(data)
         }
       )
@@ -158,11 +147,16 @@ const Chatroom = () => {
   }, [chatroomData.messages, uid, scrollToLatestMessage])
 
   useEffect(() => {
-    if (uid === '' && !auth.currentUser) {
-      signInWithPopup(auth, provider).then(result => {
-        setUid(result.user.uid)
-      })
-    }
+    onAuthStateChanged(auth, user => {
+      console.log(user)
+      if (user) {
+        setUid(user.uid)
+      } else {
+        signInWithPopup(auth, provider).then(result => {
+          setUid(result.user.uid)
+        })
+      }
+    })
   }, [uid, auth])
 
   return (

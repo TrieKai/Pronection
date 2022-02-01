@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useRef } from 'react'
 import GoogleMapReact, { Props } from 'google-map-react'
 import styled from 'styled-components'
 import GetUserLocation from 'util/getUserLocation'
@@ -7,7 +7,9 @@ import { ReactComponent as GPSFixedIcon } from 'assets/icon/gps-fixed.svg'
 import { ReactComponent as AddIcon } from 'assets/icon/add.svg'
 import { ReactComponent as MinusIcon } from 'assets/icon/minus.svg'
 
-interface IGoogleMap extends Props {}
+interface IGoogleMap extends Props {
+  setMap: React.Dispatch<React.SetStateAction<google.maps.Map<Element> | null>>
+}
 
 const ControlContainer = styled.div`
   position: absolute;
@@ -40,26 +42,30 @@ const ControlContainer = styled.div`
 `
 
 const GoogleMap: React.FC<IGoogleMap> = props => {
-  const { options, style, children } = props
-  const [map, setMap] = useState<google.maps.Map | null>(null)
+  const { options, style, setMap, children } = props
+  const mapRef = useRef<google.maps.Map | null>(null)
 
-  const onLoaded = useCallback(({ map: googleMap }) => {
-    setMap(googleMap)
-  }, [])
+  const onLoaded = useCallback(
+    ({ map: googleMap }) => {
+      setMap(googleMap)
+      mapRef.current = googleMap
+    },
+    [setMap]
+  )
 
   const ZoomOut = useCallback(() => {
-    map?.setZoom(map.getZoom() - 1)
-  }, [map])
+    mapRef.current?.setZoom(mapRef.current.getZoom() - 1)
+  }, [])
 
   const ZoomIn = useCallback(() => {
-    map?.setZoom(map.getZoom() + 1)
-  }, [map])
+    mapRef.current?.setZoom(mapRef.current.getZoom() + 1)
+  }, [])
 
   const GPSOnClick = useCallback(() => {
     GetUserLocation().then(position =>
-      map?.panTo({ lat: position.latitude, lng: position.longitude })
+      mapRef.current?.panTo({ lat: position.latitude, lng: position.longitude })
     )
-  }, [map])
+  }, [])
 
   return (
     <>

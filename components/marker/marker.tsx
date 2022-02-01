@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+import { Fragment } from 'react'
 import styled from 'styled-components'
 
 interface IMarker {
@@ -74,7 +75,7 @@ const Marker: React.VFC<IMarker & ICustomMarker> = ({
     <a href={href}>
       <MarkerContainer>
         {imageUrlList.map((imageUrl, i, _self) => (
-          <>
+          <Fragment key={i}>
             {i < maxVisibleUserNumber && (
               <div
                 className={`image-box ${
@@ -86,7 +87,7 @@ const Marker: React.VFC<IMarker & ICustomMarker> = ({
                 <img src={imageUrl} alt='avatar' />
               </div>
             )}
-          </>
+          </Fragment>
         ))}
         {remainUserNum > 0 && <div className='number'>+{remainUserNum}</div>}
       </MarkerContainer>
