@@ -3,15 +3,17 @@ import { createPortal } from 'react-dom'
 import { a, useTransition } from '@react-spring/web'
 import styled from 'styled-components'
 
-type position = 'start' | 'center' | 'end'
+type position = 'flex-start' | 'center' | 'flex-end'
 
 interface IModalOverlayStyle {
   position: position
 }
 
 const ModalOverlay = styled(a.div)<IModalOverlayStyle>`
-  position: absolute;
+  position: fixed;
   top: 0;
+  right: 0;
+  bottom: 0;
   left: 0;
   width: 100%;
   height: 100%;

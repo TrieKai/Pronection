@@ -201,7 +201,7 @@ const Home: NextPage = () => {
             <Modal
               show={openChatroom}
               onClose={() => setOpenChatroom(false)}
-              position={'end'}
+              position={'flex-end'}
             >
               <CreateRoomContainer
                 onClick={e => e.stopPropagation()}

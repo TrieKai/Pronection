@@ -18,7 +18,7 @@ const MessageContainer = styled.div<IMessageContainerStyles>`
   grid-template-areas: ${({ isSelf }) =>
     isSelf ? '". time message avatar"' : '"avatar message time ."'};
   grid-template-columns: ${({ isSelf }) =>
-    isSelf ? '1fr auto min-content 42px' : '42px min-content auto 1fr'};
+    isSelf ? '1fr auto max-content 42px' : '42px max-content auto 1fr'};
   grid-template-rows: minmax(38px, auto);
   justify-content: ${({ isSelf }) => (isSelf ? 'flex-end' : 'flex-start')};
   padding: 4px;

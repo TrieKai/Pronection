@@ -13,7 +13,7 @@ interface ICustomMarker {
   maxVisibleUserNumber?: number
 }
 
-const avatarSize = 56
+const avatarSize = 64
 const imageBoxSize = 30
 const avatarBorder = 4
 
@@ -40,8 +40,8 @@ const MarkerContainer = styled.div`
     z-index: 1;
 
     img {
-      width: ${avatarSize}px;
-      height: ${avatarSize}px;
+      width: ${avatarSize + avatarBorder * 2}px;
+      height: ${avatarSize + avatarBorder * 2}px;
       border-radius: 100%;
       border: ${avatarBorder}px solid #fff;
     }
@@ -57,6 +57,7 @@ const MarkerContainer = styled.div`
     justify-content: center;
     width: ${avatarSize + avatarBorder * 2}px;
     height: ${avatarSize + avatarBorder * 2}px;
+    font-size: 20px;
     background: #91a0fb;
     border-radius: 100%;
     color: #fff;
