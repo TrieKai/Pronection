@@ -74,7 +74,6 @@ const Chatroom = () => {
     push
   } = useRouter()
   const auth = getAuth()
-  // console.log(auth)
   const db = getFirestore()
   const firstRender = useRef<boolean>(true)
   const [uid, setUid] = useState<string>('')
@@ -91,10 +90,9 @@ const Chatroom = () => {
   }, [])
 
   const sendMessage: React.MouseEventHandler<HTMLSpanElement> =
-    useCallback(async () => {
+    useCallback(async (): Promise<void> => {
       if (comment === '') return
 
-      console.log(auth.currentUser, uid)
       if (auth.currentUser && uid !== '') {
         await updateDoc(doc(db, 'chatrooms', chatroomId as string), {
           users: arrayUnion({ id: uid, photo_url: auth.currentUser.photoURL }),
@@ -106,6 +104,15 @@ const Chatroom = () => {
           })
         })
         setComment('')
+      } else {
+        signInWithPopup(auth, provider)
+          .then(result => {
+            setUid(result.user.uid)
+          })
+          .catch(error => {
+            console.log(error)
+            setUid('')
+          })
       }
     }, [auth, db, uid, chatroomId, comment])
 
@@ -148,14 +155,7 @@ const Chatroom = () => {
 
   useEffect(() => {
     onAuthStateChanged(auth, user => {
-      console.log(user)
-      if (user) {
-        setUid(user.uid)
-      } else {
-        signInWithPopup(auth, provider).then(result => {
-          setUid(result.user.uid)
-        })
-      }
+      if (user) setUid(user.uid)
     })
   }, [uid, auth])
 

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
@@ -32,8 +32,6 @@ import { ReactComponent as AddIcon } from 'assets/icon/add.svg'
 import { IFirebaseChatroom } from 'types/common'
 
 const HomeConatiner = styled.main``
-
-// const defaultPosition = { lat: 25.05075859996636, lng: 121.57745484744801 }
 
 const provider = new GoogleAuthProvider()
 
@@ -87,7 +85,7 @@ const Home: NextPage = () => {
     QueryDocumentSnapshot<DocumentData>[]
   >([])
   const [map, setMap] = useState<google.maps.Map | null>(null)
-
+  const position = useRef<google.maps.LatLngLiteral>({ lat: 0, lng: 0 })
   const [openChatroom, setOpenChatroom] = useState<boolean>(false)
 
   const go = useCallback(
@@ -109,15 +107,13 @@ const Home: NextPage = () => {
     if (chatroomName === '') return
 
     try {
-      const { latitude, longitude } = await GetUserLocation()
-      map?.panTo({ lat: latitude, lng: longitude })
       onAuthStateChanged(auth, user => {
         if (user) {
-          go(user, latitude, longitude)
+          go(user, position.current.lat, position.current.lng)
         } else {
           signInWithPopup(auth, provider)
             .then(result => {
-              go(result.user, latitude, longitude)
+              go(result.user, position.current.lat, position.current.lng)
             })
             .catch(error => {
               throw new Error(error)
@@ -127,7 +123,18 @@ const Home: NextPage = () => {
     } catch (error) {
       console.log(error)
     }
-  }, [chatroomName, map, auth, go])
+  }, [chatroomName, auth, go])
+
+  const openCreateRoom = useCallback(async () => {
+    try {
+      const { latitude, longitude } = await GetUserLocation()
+      map?.panTo({ lat: latitude, lng: longitude })
+      position.current = { lat: latitude, lng: longitude }
+      setOpenChatroom(true)
+    } catch (error) {
+      console.log(error)
+    }
+  }, [map])
 
   const queryData = useCallback(async () => {
     // const NE = new GeoPoint(
@@ -155,7 +162,7 @@ const Home: NextPage = () => {
     queryData()
   }, [queryData])
 
-  const transitions = useTransition(openChatroom, {
+  const createRoomTransitions = useTransition(openChatroom, {
     from: { transform: 'translateY(100%)' },
     enter: { transform: 'translateY(0px)' },
     leave: { transform: 'translateY(200%)' }
@@ -193,10 +200,10 @@ const Home: NextPage = () => {
             )
           })}
         </GoogleMap>
-        <AddBox onClick={() => setOpenChatroom(true)}>
+        <AddBox onClick={openCreateRoom}>
           <AddIcon />
         </AddBox>
-        {transitions(({ transform }, item) =>
+        {createRoomTransitions(({ transform }, item) =>
           item ? (
             <Modal
               show={openChatroom}
