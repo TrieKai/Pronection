@@ -13,7 +13,7 @@ interface ICustomMarker {
   maxVisibleUserNumber?: number
 }
 
-const avatarSize = 64
+const avatarSize = 48
 const imageBoxSize = 30
 const avatarBorder = 4
 

@@ -89,32 +89,31 @@ const Chatroom = () => {
     })
   }, [])
 
-  const sendMessage: React.MouseEventHandler<HTMLSpanElement> =
-    useCallback(async (): Promise<void> => {
-      if (comment === '') return
+  const sendMessage = useCallback(async (): Promise<void> => {
+    if (comment === '') return
 
-      if (auth.currentUser && uid !== '') {
-        await updateDoc(doc(db, 'chatrooms', chatroomId as string), {
-          users: arrayUnion({ id: uid, photo_url: auth.currentUser.photoURL }),
-          messages: arrayUnion({
-            user_id: uid,
-            user_name: auth.currentUser.displayName,
-            text: comment,
-            timestamp: Date.now()
-          })
+    if (auth.currentUser && uid !== '') {
+      await updateDoc(doc(db, 'chatrooms', chatroomId as string), {
+        users: arrayUnion({ id: uid, photo_url: auth.currentUser.photoURL }),
+        messages: arrayUnion({
+          user_id: uid,
+          user_name: auth.currentUser.displayName,
+          text: comment,
+          timestamp: Date.now()
         })
-        setComment('')
-      } else {
-        signInWithPopup(auth, provider)
-          .then(result => {
-            setUid(result.user.uid)
-          })
-          .catch(error => {
-            console.log(error)
-            setUid('')
-          })
-      }
-    }, [auth, db, uid, chatroomId, comment])
+      })
+      setComment('')
+    } else {
+      signInWithPopup(auth, provider)
+        .then(result => {
+          setUid(result.user.uid)
+        })
+        .catch(error => {
+          console.log(error)
+          setUid('')
+        })
+    }
+  }, [auth, db, uid, chatroomId, comment])
 
   useEffect(() => {
     if (chatroomId) {

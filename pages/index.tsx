@@ -88,7 +88,7 @@ const Home: NextPage = () => {
   const position = useRef<google.maps.LatLngLiteral>({ lat: 0, lng: 0 })
   const [openChatroom, setOpenChatroom] = useState<boolean>(false)
 
-  const go = useCallback(
+  const goToChatroom = useCallback(
     async (user: User, latitude: number, longitude: number) => {
       const doc = await addDoc(collection(db, 'chatrooms'), {
         name: chatroomName,
@@ -109,11 +109,15 @@ const Home: NextPage = () => {
     try {
       onAuthStateChanged(auth, user => {
         if (user) {
-          go(user, position.current.lat, position.current.lng)
+          goToChatroom(user, position.current.lat, position.current.lng)
         } else {
           signInWithPopup(auth, provider)
             .then(result => {
-              go(result.user, position.current.lat, position.current.lng)
+              goToChatroom(
+                result.user,
+                position.current.lat,
+                position.current.lng
+              )
             })
             .catch(error => {
               throw new Error(error)
@@ -123,7 +127,18 @@ const Home: NextPage = () => {
     } catch (error) {
       console.log(error)
     }
-  }, [chatroomName, auth, go])
+  }, [chatroomName, auth, goToChatroom])
+
+  const handleOnKeyPress = (e: React.KeyboardEvent<HTMLInputElement>): void => {
+    if (e.key === 'Enter') addChatroom()
+  }
+
+  const inputOnChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setChatRoomName(e.target.value)
+    },
+    []
+  )
 
   const openCreateRoom = useCallback(async () => {
     try {
@@ -220,7 +235,8 @@ const Home: NextPage = () => {
                   className='input'
                   value={chatroomName}
                   maxLength={20}
-                  onChange={e => setChatRoomName(e.target.value)}
+                  onChange={inputOnChange}
+                  onKeyPress={handleOnKeyPress}
                 />
                 <Button onClick={addChatroom}>確認</Button>
               </CreateRoomContainer>
