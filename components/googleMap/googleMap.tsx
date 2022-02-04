@@ -11,6 +11,14 @@ interface IGoogleMap extends Props {
   setMap: React.Dispatch<React.SetStateAction<google.maps.Map<Element> | null>>
 }
 
+const MapContainer = styled.main`
+  .gmnoprint a,
+  .gmnoprint span,
+  .gm-style-cc {
+    display: none;
+  }
+`
+
 const ControlContainer = styled.div`
   position: absolute;
   top: 0;
@@ -29,14 +37,20 @@ const ControlContainer = styled.div`
     border-radius: 100%;
     cursor: pointer;
 
-    &:hover {
-      svg [data-class='cls-1'] {
+    svg [data-class='cls-1'] {
+      fill: #314146;
+    }
+
+    @media not screen and (hover: none) {
+      &:hover svg [data-class='cls-1'] {
         fill: rgba(40, 70, 80, 0.6);
       }
     }
 
-    svg [data-class='cls-1'] {
-      fill: #314146;
+    @media screen and (hover: none) {
+      &:active svg [data-class='cls-1'] {
+        fill: rgba(40, 70, 80, 0.6);
+      }
     }
   }
 `
@@ -61,16 +75,17 @@ const GoogleMap: React.FC<IGoogleMap> = props => {
     mapRef.current?.setZoom(mapRef.current.getZoom() + 1)
   }, [])
 
-  const GPSOnClick = useCallback(() => {
-    GetUserLocation().then(position =>
+  const Locating = useCallback(() => {
+    GetUserLocation().then(position => {
       mapRef.current?.panTo({ lat: position.latitude, lng: position.longitude })
-    )
+      mapRef.current?.setZoom(14)
+    })
   }, [])
 
   return (
-    <>
+    <MapContainer>
       <ControlContainer>
-        <span onClick={GPSOnClick}>
+        <span onClick={Locating}>
           <GPSFixedIcon />
         </span>
         <span onClick={ZoomIn}>
@@ -97,7 +112,7 @@ const GoogleMap: React.FC<IGoogleMap> = props => {
       >
         {children}
       </GoogleMapReact>
-    </>
+    </MapContainer>
   )
 }
 
