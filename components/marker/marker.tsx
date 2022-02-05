@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
-import { Fragment } from 'react'
+import { Fragment, useState } from 'react'
+import { a, useSpring } from '@react-spring/web'
 import styled from 'styled-components'
 
 interface IMarker {
@@ -17,12 +18,13 @@ const avatarSize = 48
 const imageBoxSize = 30
 const avatarBorder = 2
 
-const MarkerContainer = styled.div`
+const MarkerContainer = styled(a.div)`
   position: relative;
   display: flex;
   padding: 4px;
   width: fit-content;
-  transform: translate3d(-50%, -50%, 0);
+  transform-origin: center center;
+  will-change: transform;
 
   &::before {
     content: '';
@@ -70,11 +72,23 @@ const Marker: React.VFC<IMarker & ICustomMarker> = ({
   imageUrlList,
   maxVisibleUserNumber = 2
 }) => {
+  const [isHover, setIsHover] = useState<boolean>(false)
   const remainUserNum = imageUrlList.length - maxVisibleUserNumber
+
+  const markerAnimation = useSpring({
+    transform: isHover
+      ? 'translate3d(-50%, -50%, 0) scale3d(1.1, 1.1, 1.1)'
+      : 'translate3d(-50%, -50%, 0) scale3d(1, 1, 1)',
+    config: { duration: 300 }
+  })
 
   return (
     <a href={href}>
-      <MarkerContainer>
+      <MarkerContainer
+        style={markerAnimation}
+        onMouseEnter={() => setIsHover(true)}
+        onMouseLeave={() => setIsHover(false)}
+      >
         {imageUrlList.map((imageUrl, i, _self) => (
           <Fragment key={i}>
             {i < maxVisibleUserNumber && (
