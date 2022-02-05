@@ -90,13 +90,20 @@ const Home: NextPage = () => {
 
   const goToChatroom = useCallback(
     async (user: User, latitude: number, longitude: number) => {
-      const doc = await addDoc(collection(db, 'chatrooms'), {
+      const data: IFirebaseChatroom = {
         name: chatroomName,
         create_at: Date.now(),
-        users: [{ id: user.uid, photo_url: user.photoURL }],
+        users: [
+          {
+            user_id: user.uid,
+            user_name: user.displayName ?? '',
+            photo_url: user.photoURL ?? ''
+          }
+        ],
         messages: [],
         position: new GeoPoint(latitude, longitude)
-      })
+      }
+      const doc = await addDoc(collection(db, 'chatrooms'), data)
       setChatRoomName('')
       push(`/chatroom/${doc.id}`)
     },

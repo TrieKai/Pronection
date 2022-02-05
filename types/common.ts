@@ -1,5 +1,13 @@
 import { GeoPoint } from '@firebase/firestore'
 
+export interface IFirebaseChatroom {
+  create_at: number
+  messages: IMessage[]
+  name: string
+  position: GeoPoint
+  users: IUsers[]
+}
+
 export interface IMessage {
   user_id: string
   user_name: string
@@ -7,13 +15,8 @@ export interface IMessage {
   timestamp: number
 }
 
-export interface IFirebaseChatroom {
-  create_at: number
-  messages: IMessage[]
-  name: string
-  position: GeoPoint
-  users: {
-    id: string
-    photo_url: string
-  }[]
+export interface IUsers {
+  user_id: string
+  user_name: string
+  photo_url: string
 }

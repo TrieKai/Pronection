@@ -9,6 +9,7 @@ interface IMessageContainerStyles {
 interface IMessage {
   isSelf: boolean
   userAvatarUrl: string
+  userName: string
   text: string
   time: number
 }
@@ -66,11 +67,11 @@ const MessageContainer = styled.div<IMessageContainerStyles>`
 `
 
 const Message = forwardRef<HTMLDivElement, IMessage>(
-  ({ isSelf, userAvatarUrl, text, time }, ref) => {
+  ({ isSelf, userAvatarUrl, userName, text, time }, ref) => {
     return (
       <MessageContainer ref={ref} isSelf={isSelf}>
         <span className='avatar'>
-          <img src={userAvatarUrl} alt='avatar' />
+          <img src={userAvatarUrl} title={userName} alt='avatar' />
         </span>
         <div className='message'>
           <div className='text'>{text}</div>

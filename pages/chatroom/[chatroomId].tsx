@@ -19,7 +19,7 @@ import Message from 'components/message'
 import MessageInputArea from 'components/messageInputArea'
 import { ReactComponent as ArrowIcon } from 'assets/icon/arrow.svg'
 
-import { IFirebaseChatroom } from 'types/common'
+import { IFirebaseChatroom, IUsers } from 'types/common'
 
 const DEFAULT_CHATROOM_DATA: IFirebaseChatroom = {
   create_at: 0,
@@ -83,7 +83,7 @@ const Chatroom = () => {
   )
   const messageRefs = useRef<(HTMLDivElement | null)[]>([])
 
-  const scrollToLatestMessage = useCallback(() => {
+  const scrollToLatestMessage = useCallback((): void => {
     messageRefs.current[messageRefs.current.length - 1]?.scrollIntoView({
       behavior: 'smooth'
     })
@@ -93,8 +93,13 @@ const Chatroom = () => {
     if (comment === '') return
 
     if (auth.currentUser && uid !== '') {
+      const users: IUsers = {
+        user_id: uid,
+        user_name: auth.currentUser.displayName ?? '',
+        photo_url: auth.currentUser.photoURL ?? ''
+      }
       await updateDoc(doc(db, 'chatrooms', chatroomId as string), {
-        users: arrayUnion({ id: uid, photo_url: auth.currentUser.photoURL }),
+        users: arrayUnion(users),
         messages: arrayUnion({
           user_id: uid,
           user_name: auth.currentUser.displayName,
@@ -172,8 +177,12 @@ const Chatroom = () => {
             ref={el => (messageRefs.current[i] = el)}
             isSelf={message.user_id === uid}
             userAvatarUrl={
-              chatroomData.users.find(item => item.id === message.user_id)
+              chatroomData.users.find(item => item.user_id === message.user_id)
                 ?.photo_url ?? ''
+            }
+            userName={
+              chatroomData.users.find(item => item.user_id === message.user_id)
+                ?.user_name ?? ''
             }
             text={message.text}
             time={message.timestamp}
