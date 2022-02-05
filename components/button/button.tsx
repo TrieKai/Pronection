@@ -6,18 +6,19 @@ interface IButton {
 
 const ButtonContainer = styled.div`
   display: flex;
+  justify-content: center;
   padding: 7px 12px;
-  width: fit-content;
+  width: 100%;
   border-radius: 12px;
   font-size: 18px;
   font-weight: 500;
   line-height: 24px;
-  background: #1ea7fd;
+  background: #91a0fb;
   color: #fff;
   cursor: pointer;
 
   &:hover {
-    background: #2aadff;
+    background: #8392f8;
   }
 `
 

@@ -1,4 +1,5 @@
 import { createRef, useCallback, useEffect, useRef, useState } from 'react'
+import { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import {
   arrayUnion,
@@ -68,7 +69,7 @@ const ChatroomHeader = styled.div`
 
 const provider = new GoogleAuthProvider()
 
-const Chatroom = () => {
+const Chatroom: NextPage = () => {
   const {
     query: { chatroomId },
     push

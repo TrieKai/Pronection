@@ -15,7 +15,7 @@ interface ICustomMarker {
 
 const avatarSize = 48
 const imageBoxSize = 30
-const avatarBorder = 4
+const avatarBorder = 2
 
 const MarkerContainer = styled.div`
   position: relative;
