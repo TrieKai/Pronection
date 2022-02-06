@@ -17,6 +17,7 @@ import GoogleMap from 'components/googleMap/googleMap'
 import Modal from 'components/modal'
 import Marker from 'components/marker'
 import Button from 'components/button'
+import Spinner from 'components/spinner'
 import styled from 'styled-components'
 import {
   getAuth,
@@ -108,6 +109,7 @@ const Home: NextPage = () => {
   const [map, setMap] = useState<google.maps.Map | null>(null)
   const position = useRef<google.maps.LatLngLiteral>({ lat: 0, lng: 0 })
   const [openChatroom, setOpenChatroom] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(false)
 
   const goToChatroom = useCallback(
     async (user: User, latitude: number, longitude: number) => {
@@ -169,6 +171,7 @@ const Home: NextPage = () => {
   )
 
   const openCreateRoom = useCallback(async () => {
+    setLoading(true)
     try {
       const { latitude, longitude } = await GetUserLocation()
       map?.panTo({ lat: latitude, lng: longitude })
@@ -177,6 +180,7 @@ const Home: NextPage = () => {
     } catch (error) {
       console.log(error)
     }
+    setLoading(false)
   }, [map])
 
   const queryData = useCallback(async () => {
@@ -246,6 +250,9 @@ const Home: NextPage = () => {
         <AddBox onClick={openCreateRoom}>
           <AddIcon />
         </AddBox>
+        <Modal show={loading} position={'center'}>
+          <Spinner />
+        </Modal>
         {createRoomTransitions(({ transform }, item) =>
           item ? (
             <Modal

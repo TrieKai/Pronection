@@ -7,21 +7,19 @@ export default {
   component: Marker
 } as ComponentMeta<typeof Marker>
 
-const Template: ComponentStory<typeof Marker> = args => {
-  return (
-    <div
-      style={{
-        position: 'absolute',
-        left: '50%',
-        top: '50%',
-        width: 0,
-        height: 0
-      }}
-    >
-      <Marker {...args} />
-    </div>
-  )
-}
+const Template: ComponentStory<typeof Marker> = args => (
+  <div
+    style={{
+      position: 'absolute',
+      left: '50%',
+      top: '50%',
+      width: 0,
+      height: 0
+    }}
+  >
+    <Marker {...args} />
+  </div>
+)
 
 const Avatar1 =
   'https://cdn.pixabay.com/photo/2016/11/18/23/38/child-1837375_1280.png'

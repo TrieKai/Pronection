@@ -27,7 +27,7 @@ const ModalOverlay = styled(a.div)<IModalOverlayStyle>`
 
 interface ModalProps {
   show: boolean
-  onClose: Function
+  onClose?: Function
   position: position
 }
 
@@ -45,7 +45,7 @@ const Modal: React.FC<ModalProps> = ({
 
   const handleCloseClick = (e: MouseEvent) => {
     e.preventDefault()
-    onClose()
+    onClose && onClose()
   }
 
   const overlaysTransitions = useTransition(show, {
