@@ -17,10 +17,12 @@ interface IMessage {
 const MessageContainer = styled.div<IMessageContainerStyles>`
   display: grid;
   grid-template-areas: ${({ isSelf }) =>
-    isSelf ? '". time message avatar"' : '"avatar message time ."'};
+    isSelf
+      ? '". username username avatar" ". time message avatar"'
+      : '"avatar username username ." "avatar message time ."'};
   grid-template-columns: ${({ isSelf }) =>
-    isSelf ? '1fr auto max-content 42px' : '42px max-content auto 1fr'};
-  grid-template-rows: minmax(38px, auto);
+    isSelf ? '1fr auto auto 48px' : '48px auto auto 1fr'};
+  grid-template-rows: auto auto;
   justify-content: ${({ isSelf }) => (isSelf ? 'flex-end' : 'flex-start')};
   padding: 4px;
   width: 100%;
@@ -33,16 +35,24 @@ const MessageContainer = styled.div<IMessageContainerStyles>`
     height: 100%;
 
     img {
-      width: 38px;
-      height: 38px;
+      width: 44px;
+      height: 44px;
       border-radius: 100%;
     }
+  }
+
+  .username {
+    grid-area: username;
+    margin-bottom: 4px;
+    text-align: ${({ isSelf }) => (isSelf ? 'right' : 'left')};
+    color: #9e9e9e;
   }
 
   .message {
     grid-area: message;
     width: max-content;
     min-height: 38px;
+    justify-self: ${({ isSelf }) => (isSelf ? 'end' : 'start')};
 
     .text {
       padding: 8px 10px;
@@ -73,6 +83,7 @@ const Message = forwardRef<HTMLDivElement, IMessage>(
         <span className='avatar'>
           <img src={userAvatarUrl} title={userName} alt='avatar' />
         </span>
+        <span className='username'>{userName}</span>
         <div className='message'>
           <div className='text'>{text}</div>
         </div>

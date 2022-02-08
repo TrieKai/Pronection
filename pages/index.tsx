@@ -45,12 +45,19 @@ const AddBox = styled.span`
   align-items: center;
   width: 60px;
   height: 60px;
-  background: #fff;
+  background: #6777e2;
   border-radius: 100%;
   transform: translateX(-50%);
+  box-shadow: 0px 3px 1px -2px rgb(0 0 0 / 20%),
+    0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%);
+  cursor: pointer;
+
+  &:hover {
+    background: #5668df;
+  }
 
   svg [data-class='cls-1'] {
-    fill: black;
+    fill: white;
   }
 `
 

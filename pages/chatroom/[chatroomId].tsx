@@ -1,6 +1,7 @@
 import { createRef, useCallback, useEffect, useRef, useState } from 'react'
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
+import Head from 'next/head'
 import {
   arrayUnion,
   doc,
@@ -166,6 +167,11 @@ const Chatroom: NextPage = () => {
 
   return (
     <>
+      <Head>
+        <title>Pronection | {chatroomData.name}</title>
+        <meta name='description' content='Chat with people nearby' />
+        <link rel='icon' href='/location-pin.png' />
+      </Head>
       <ChatroomHeader>
         <span className='back-icon'>
           <ArrowIcon onClick={() => push('/')} />
