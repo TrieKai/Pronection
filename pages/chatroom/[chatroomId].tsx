@@ -105,6 +105,7 @@ const Chatroom: NextPage = () => {
     DEFAULT_CHATROOM_DATA
   )
   const messageRefs = useRef<(HTMLDivElement | null)[]>([])
+  const isScrollToBottom = useRef<boolean>(false)
 
   const scrollToLatestMessage = useCallback((): void => {
     messageRefs.current[messageRefs.current.length - 1]?.scrollIntoView({
@@ -112,7 +113,17 @@ const Chatroom: NextPage = () => {
     })
   }, [])
 
-  const handleLogin = useCallback(() => {
+  const chatroomOnScroll = useCallback(
+    (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
+      // check chatroom if scrolled to bottom
+      isScrollToBottom.current =
+        e.currentTarget.scrollTop ===
+        e.currentTarget.scrollHeight - e.currentTarget.offsetHeight
+    },
+    []
+  )
+
+  const handleLogin = useCallback((): void => {
     signInWithPopup(auth, provider)
       .then(result => {
         setUid(result.user.uid)
@@ -174,8 +185,9 @@ const Chatroom: NextPage = () => {
           }
         } else {
           if (
-            messagesLength - 1 === i &&
-            chatroomData.messages[messagesLength - 1].user_id === uid
+            (messagesLength - 1 === i &&
+              chatroomData.messages[messagesLength - 1].user_id === uid) ||
+            isScrollToBottom
           )
             scrollToLatestMessage()
         }
@@ -207,7 +219,7 @@ const Chatroom: NextPage = () => {
         </span>
         <span className='chatroom-name'>{chatroomData.name}</span>
       </ChatroomHeader>
-      <ChatroomContainer>
+      <ChatroomContainer onScroll={chatroomOnScroll}>
         {uid === '' && (
           <div className='top-bar'>
             請先登入唷！
