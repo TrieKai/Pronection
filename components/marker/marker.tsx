@@ -71,7 +71,7 @@ const Marker: React.VFC<IMarker & ICustomMarker> = ({
   href,
   imageUrlList,
   maxVisibleUserNumber = 2
-}) => {
+}): JSX.Element => {
   const [isHover, setIsHover] = useState<boolean>(false)
   const remainUserNum = imageUrlList.length - maxVisibleUserNumber
 

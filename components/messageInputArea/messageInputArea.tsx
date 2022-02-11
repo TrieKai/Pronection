@@ -39,7 +39,7 @@ const TypingArea: React.VFC<IMessageInputArea> = ({
   comment,
   setComment,
   sendMessage
-}) => {
+}): JSX.Element => {
   const handleOnKeyPress = (e: React.KeyboardEvent<HTMLInputElement>): void => {
     if (e.key === 'Enter') sendMessage()
   }

@@ -55,7 +55,7 @@ const ControlContainer = styled.div`
   }
 `
 
-const GoogleMap: React.FC<IGoogleMap> = props => {
+const GoogleMap: React.FC<IGoogleMap> = (props): JSX.Element => {
   const { options, style, setMap, children } = props
   const mapRef = useRef<google.maps.Map | null>(null)
 

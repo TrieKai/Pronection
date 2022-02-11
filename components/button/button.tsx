@@ -33,7 +33,11 @@ const ButtonContainer = styled.div<IButtonStyles>`
   }
 `
 
-const Button: React.FC<IButton> = ({ type, onClick, children }) => {
+const Button: React.FC<IButton> = ({
+  type,
+  onClick,
+  children
+}): JSX.Element => {
   return (
     <ButtonContainer type={type} onClick={onClick}>
       {children}

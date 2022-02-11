@@ -239,20 +239,26 @@ const Home: NextPage = () => {
           }}
           setMap={setMap}
         >
-          {chatroomList.map(chatroom => {
-            const data = chatroom.data() as IFirebaseChatroom
-            return (
-              <Marker
-                lat={data.position.latitude}
-                lng={data.position.longitude}
-                href={`/chatroom/${chatroom.id}`}
-                imageUrlList={data.users.map(item => {
-                  return item.photo_url
-                })}
-                key={chatroom.id}
-              />
-            )
-          })}
+          {chatroomList
+            .sort((prev, next) => {
+              const prevData = prev.data() as IFirebaseChatroom
+              const nextData = next.data() as IFirebaseChatroom
+              return nextData.position.latitude - prevData.position.latitude
+            })
+            .map(chatroom => {
+              const data = chatroom.data() as IFirebaseChatroom
+              return (
+                <Marker
+                  lat={data.position.latitude}
+                  lng={data.position.longitude}
+                  href={`/chatroom/${chatroom.id}`}
+                  imageUrlList={data.users.map(item => {
+                    return item.photo_url
+                  })}
+                  key={chatroom.id}
+                />
+              )
+            })}
         </GoogleMap>
         <AddBox onClick={openCreateRoom}>
           <AddIcon />

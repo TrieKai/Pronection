@@ -43,7 +43,7 @@ const SpinnerContainer = styled.div`
   }
 `
 
-const Spinner: React.VFC = () => (
+const Spinner: React.VFC = (): JSX.Element => (
   <SpinnerContainer>
     <div></div>
     <div></div>

@@ -78,7 +78,7 @@ const MessageContainer = styled.div<IMessageContainerStyles>`
 `
 
 const Message = forwardRef<HTMLDivElement, IMessage>(
-  ({ isSelf, userAvatarUrl, userName, text, time }, ref) => {
+  ({ isSelf, userAvatarUrl, userName, text, time }, ref): JSX.Element => {
     return (
       <MessageContainer ref={ref} isSelf={isSelf}>
         <span className='avatar'>
