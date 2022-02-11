@@ -16,7 +16,7 @@ import { a, useTransition } from '@react-spring/web'
 import GoogleMap from 'components/googleMap/googleMap'
 import Modal from 'components/modal'
 import Marker from 'components/marker'
-import Button from 'components/button'
+import Button, { ButtonType } from 'components/button'
 import Spinner from 'components/spinner'
 import styled from 'styled-components'
 import {
@@ -283,7 +283,9 @@ const Home: NextPage = () => {
                   />
                 </div>
                 <div className='button-box'>
-                  <Button onClick={addChatroom}>確認</Button>
+                  <Button type={ButtonType.primary} onClick={addChatroom}>
+                    確認
+                  </Button>
                 </div>
               </CreateRoomContainer>
             </Modal>

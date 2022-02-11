@@ -60,8 +60,9 @@ const MessageContainer = styled.div<IMessageContainerStyles>`
       border-radius: 4px;
       font-size: 18px;
       line-height: 22px;
-      background: ${({ isSelf }) => (isSelf ? '#91a0fb' : '#e5eaec')};
+      background: ${({ isSelf }) => (isSelf ? '#91a0fb' : '#ececec')};
       color: ${({ isSelf }) => (isSelf ? '#fafafa' : '#314146')};
+      border: ${({ isSelf }) => (isSelf ? '#8b9aff' : '#e2e9ec')} solid 1px;
       word-break: break-word;
     }
   }

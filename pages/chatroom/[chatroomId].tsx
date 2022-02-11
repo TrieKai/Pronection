@@ -19,6 +19,7 @@ import {
 import styled from 'styled-components'
 import Message from 'components/message'
 import MessageInputArea from 'components/messageInputArea'
+import Button, { ButtonType } from 'components/button'
 import { ReactComponent as ArrowIcon } from 'assets/icon/arrow.svg'
 
 import { IFirebaseChatroom, IUsers } from 'types/common'
@@ -32,11 +33,31 @@ const DEFAULT_CHATROOM_DATA: IFirebaseChatroom = {
 }
 
 const ChatroomContainer = styled.div`
+  position: relative;
   padding: 16px;
   width: 100%;
   height: calc(100% - 64px - 56px);
   background: #f5f8f9;
   overflow-y: auto;
+
+  .top-bar {
+    position: fixed;
+    top: 64px;
+    right: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 56px;
+    background: #91a0fb;
+    color: #fff;
+    border-bottom: 1px solid #8898ff;
+
+    .button-box {
+      margin-left: 8px;
+    }
+  }
 `
 
 const ChatroomHeader = styled.div`
@@ -78,7 +99,7 @@ const Chatroom: NextPage = () => {
   const auth = getAuth()
   const db = getFirestore()
   const firstRender = useRef<boolean>(true)
-  const [uid, setUid] = useState<string>('')
+  const [uid, setUid] = useState<string | null>(null)
   const [comment, setComment] = useState<string>('')
   const [chatroomData, setChatroomData] = useState<IFirebaseChatroom>(
     DEFAULT_CHATROOM_DATA
@@ -91,10 +112,21 @@ const Chatroom: NextPage = () => {
     })
   }, [])
 
+  const handleLogin = useCallback(() => {
+    signInWithPopup(auth, provider)
+      .then(result => {
+        setUid(result.user.uid)
+      })
+      .catch(error => {
+        console.log(error)
+        setUid('')
+      })
+  }, [auth])
+
   const sendMessage = useCallback(async (): Promise<void> => {
     if (comment === '') return
 
-    if (auth.currentUser && uid !== '') {
+    if (auth.currentUser && uid) {
       const users: IUsers = {
         user_id: uid,
         user_name: auth.currentUser.displayName ?? '',
@@ -111,16 +143,9 @@ const Chatroom: NextPage = () => {
       })
       setComment('')
     } else {
-      signInWithPopup(auth, provider)
-        .then(result => {
-          setUid(result.user.uid)
-        })
-        .catch(error => {
-          console.log(error)
-          setUid('')
-        })
+      handleLogin()
     }
-  }, [auth, db, uid, chatroomId, comment])
+  }, [comment, auth.currentUser, uid, db, chatroomId, handleLogin])
 
   useEffect(() => {
     if (chatroomId) {
@@ -161,7 +186,11 @@ const Chatroom: NextPage = () => {
 
   useEffect(() => {
     onAuthStateChanged(auth, user => {
-      if (user) setUid(user.uid)
+      if (user) {
+        setUid(user.uid)
+      } else {
+        setUid('')
+      }
     })
   }, [uid, auth])
 
@@ -179,6 +208,16 @@ const Chatroom: NextPage = () => {
         <span className='chatroom-name'>{chatroomData.name}</span>
       </ChatroomHeader>
       <ChatroomContainer>
+        {uid === '' && (
+          <div className='top-bar'>
+            請先登入唷！
+            <div className='button-box'>
+              <Button type={ButtonType.secondary} onClick={handleLogin}>
+                Login
+              </Button>
+            </div>
+          </div>
+        )}
         {chatroomData.messages.map((message, i) => (
           <Message
             ref={el => (messageRefs.current[i] = el)}

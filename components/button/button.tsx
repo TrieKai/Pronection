@@ -1,10 +1,17 @@
 import styled from 'styled-components'
 
+import { ButtonType } from './button.type'
+
 interface IButton {
-  onClick?: () => {}
+  type: ButtonType
+  onClick?: () => void
 }
 
-const ButtonContainer = styled.div`
+interface IButtonStyles {
+  type: ButtonType
+}
+
+const ButtonContainer = styled.div<IButtonStyles>`
   display: flex;
   justify-content: center;
   padding: 7px 12px;
@@ -13,17 +20,25 @@ const ButtonContainer = styled.div`
   font-size: 18px;
   font-weight: 500;
   line-height: 24px;
-  background: #91a0fb;
+  background: ${({ type }) =>
+    type === ButtonType.primary ? '#91a0fb' : 'transparent'};
+  border: ${({ type }) =>
+    type === ButtonType.primary ? 'unset' : '#fff 2px solid'};
   color: #fff;
   cursor: pointer;
 
   &:hover {
-    background: #8392f8;
+    background: ${({ type }) =>
+      type === ButtonType.primary ? '#8392f8' : 'unset'};
   }
 `
 
-const Button: React.FC<IButton> = ({ onClick, children }) => {
-  return <ButtonContainer onClick={onClick}>{children}</ButtonContainer>
+const Button: React.FC<IButton> = ({ type, onClick, children }) => {
+  return (
+    <ButtonContainer type={type} onClick={onClick}>
+      {children}
+    </ButtonContainer>
+  )
 }
 
 export default Button
