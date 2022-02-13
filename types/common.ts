@@ -20,3 +20,8 @@ export interface IUsers {
   user_name: string
   photo_url: string
 }
+
+export interface IMarker {
+  lat: number
+  lng: number
+}

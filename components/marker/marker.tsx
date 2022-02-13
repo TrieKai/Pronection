@@ -3,10 +3,7 @@ import { Fragment, useState } from 'react'
 import { a, useSpring } from '@react-spring/web'
 import styled from 'styled-components'
 
-interface IMarker {
-  lat: number
-  lng: number
-}
+import { IMarker } from 'types/common'
 
 interface ICustomMarker {
   href: string
