@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import GoogleMapReact, { Props } from 'google-map-react'
 import styled from 'styled-components'
-import GetUserLocation from 'util/getUserLocation'
+import GetUserLocation from 'util/getCurrentPosition'
 import Compass from 'components/compass'
 import { GoogleMapLayerStyles } from './asset'
 import { ReactComponent as GPSFixedIcon } from 'assets/icon/gps-fixed.svg'

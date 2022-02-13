@@ -26,7 +26,7 @@ import {
   onAuthStateChanged,
   User
 } from 'firebase/auth'
-import GetUserLocation from 'util/getUserLocation'
+import GetUserLocation from 'util/getCurrentPosition'
 import { DEFAULT_POSITION } from 'assets/constant'
 import { ReactComponent as AddIcon } from 'assets/icon/add.svg'
 

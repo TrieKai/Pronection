@@ -37,7 +37,7 @@ export default class MyDocument extends Document {
     return (
       <Html>
         <Head>
-          <link rel='shortcut icon' href='/mrt.svg' />
+          <link rel='shortcut icon' href='/location-pin.png' />
         </Head>
         <body>
           <Main />
