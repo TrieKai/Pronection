@@ -32,15 +32,19 @@ const Avatar4 =
 
 export const One = Template.bind({})
 One.args = {
+  chatroomName: 'One One One One One One One One One One',
   imageUrlList: [Avatar1]
 }
 
 export const Two = Template.bind({})
 Two.args = {
+  chatroomName: 'Two Two Two Two Two Two Two Two Two Two',
   imageUrlList: [Avatar1, Avatar2]
 }
 
 export const Multiple = Template.bind({})
 Multiple.args = {
+  chatroomName:
+    'Multiple Multiple Multiple Multiple Multiple Multiple Multiple Multiple Multiple Multiple',
   imageUrlList: [Avatar1, Avatar2, Avatar3, Avatar4]
 }

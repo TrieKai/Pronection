@@ -251,6 +251,7 @@ const Home: NextPage = () => {
                 <Marker
                   lat={data.position.latitude}
                   lng={data.position.longitude}
+                  chatroomName={data.name}
                   href={`/chatroom/${chatroom.id}`}
                   imageUrlList={data.users.map(item => {
                     return item.photo_url

@@ -1,11 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
-import { Fragment, useState } from 'react'
+import { Fragment, useCallback, useState } from 'react'
 import { a, useSpring } from '@react-spring/web'
 import styled from 'styled-components'
 
 import { IMarker } from 'types/common'
 
 interface ICustomMarker {
+  chatroomName: string
   href: string
   imageUrlList: string[]
   maxVisibleUserNumber?: number
@@ -64,13 +65,78 @@ const MarkerContainer = styled(a.div)`
   }
 `
 
+export const InfoWindowContainer = styled.div`
+  position: absolute;
+  width: max-content;
+  min-width: 56px;
+  max-width: 112px;
+  max-height: 44px;
+
+  &::before,
+  &::after {
+    content: '';
+    display: block;
+    position: absolute;
+    width: 0;
+    height: 0;
+  }
+
+  &::before {
+    bottom: -6px;
+    left: calc(50% + 8px);
+    border-style: solid;
+    border-width: 6px 9px 0 0;
+    border-color: #cae0e8 transparent transparent transparent;
+  }
+
+  &::after {
+    bottom: -4px;
+    left: calc(50% + 9px);
+    border-style: solid;
+    border-width: 5px 7px 0 0;
+    border-color: #fff transparent transparent transparent;
+  }
+
+  .inner {
+    padding: 5px 7px;
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    border: 1px solid #cae0e8;
+    border-radius: 12px;
+
+    .text {
+      font-size: 12px;
+      line-height: 16px;
+      text-align: center;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      word-break: break-word;
+      overflow: hidden;
+      user-select: none;
+    }
+  }
+`
+
+type infoWindowSize = {
+  width: number
+  height: number
+}
+
 const Marker: React.VFC<IMarker & ICustomMarker> = ({
+  chatroomName,
   href,
   imageUrlList,
   maxVisibleUserNumber = 2
 }): JSX.Element => {
   const [isHover, setIsHover] = useState<boolean>(false)
   const remainUserNum = imageUrlList.length - maxVisibleUserNumber
+  const [infoWindowSize, setInfoWindowSize] = useState<infoWindowSize>({
+    width: 0,
+    height: 0
+  })
 
   const markerAnimation = useSpring({
     transform: isHover
@@ -79,6 +145,13 @@ const Marker: React.VFC<IMarker & ICustomMarker> = ({
     config: { duration: 300 }
   })
 
+  const infoWindowInnerRef = useCallback((node: HTMLDivElement | null) => {
+    setInfoWindowSize({
+      width: node?.clientWidth ?? 0,
+      height: node?.clientHeight ?? 0
+    })
+  }, [])
+
   return (
     <a href={href}>
       <MarkerContainer
@@ -86,6 +159,20 @@ const Marker: React.VFC<IMarker & ICustomMarker> = ({
         onMouseEnter={() => setIsHover(true)}
         onMouseLeave={() => setIsHover(false)}
       >
+        <InfoWindowContainer
+          style={{
+            top: !!infoWindowSize.height
+              ? `calc(-${infoWindowSize.height}px - 8px)`
+              : 'unset',
+            left: !!infoWindowSize.width
+              ? `calc(50% - (${infoWindowSize.width}px / 2))`
+              : 'unset'
+          }}
+        >
+          <div ref={infoWindowInnerRef} className='inner'>
+            <div className='text'>{chatroomName}</div>
+          </div>
+        </InfoWindowContainer>
         {imageUrlList.map((imageUrl, i, _self) => (
           <Fragment key={i}>
             {i < maxVisibleUserNumber && (
