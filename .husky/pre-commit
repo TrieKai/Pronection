@@ -1,5 +1,7 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
+npx eslint . --ext .js,.ts.,.jsx,.tsx
 # TODO: add test
 # npm test -- --watchAll=false
+npx lint-staged
