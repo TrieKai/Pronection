@@ -27,7 +27,7 @@ const ModalOverlay = styled(a.div)<IModalOverlayStyle>`
 
 interface ModalProps {
   show: boolean
-  onClose?: Function
+  onClose?: () => void
   position: position
 }
 

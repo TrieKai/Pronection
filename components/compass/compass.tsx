@@ -2,8 +2,6 @@ import styled from 'styled-components'
 
 import { IMarker } from 'types/common'
 
-interface ICompass {}
-
 const CompassContainer = styled.div`
   display: flex;
   align-items: center;
@@ -23,7 +21,7 @@ const CompassContainer = styled.div`
   }
 `
 
-const Compass: React.VFC<IMarker & ICompass> = () => {
+const Compass: React.VFC<IMarker> = () => {
   return (
     <CompassContainer>
       <div className='inner' />
