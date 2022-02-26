@@ -177,23 +177,30 @@ const Home: NextPage = () => {
   )
 
   const openCreateRoom = useCallback(async () => {
-    setLoading(true)
-    try {
-      const { latitude, longitude } = await GetUserLocation()
-      map?.panTo({ lat: latitude, lng: longitude })
-      dispatch(
-        UpdateGeolocation({
-          lat: latitude,
-          lng: longitude
-        })
-      )
-      // position.current = { lat: latitude, lng: longitude }
+    const handleMap = (lat: number, lng: number) => {
+      map?.panTo({ lat, lng })
       setOpenChatroom(true)
-    } catch (error) {
-      console.log(error)
+    }
+
+    setLoading(true)
+    if (position?.lat && position?.lng) {
+      handleMap(position.lat, position.lng)
+    } else {
+      try {
+        const { latitude, longitude } = await GetUserLocation()
+        dispatch(
+          UpdateGeolocation({
+            lat: latitude,
+            lng: longitude
+          })
+        )
+        handleMap(latitude, longitude)
+      } catch (error) {
+        console.log(error)
+      }
     }
     setLoading(false)
-  }, [dispatch, map])
+  }, [dispatch, map, position?.lat, position?.lng])
 
   const queryData = useCallback(async () => {
     // const NE = new GeoPoint(
