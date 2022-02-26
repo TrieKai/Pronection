@@ -1,11 +1,12 @@
-import '../styles/globals.css'
 import type { AppProps } from 'next/app'
+import { Wrapper } from 'app/store'
 import { FirebaseInit } from 'util/firebase'
+import '../styles/globals.css'
 
-function MyApp({ Component, pageProps }: AppProps) {
+const MyApp = ({ Component, pageProps }: AppProps) => {
   FirebaseInit()
 
   return <Component {...pageProps} />
 }
 
-export default MyApp
+export default Wrapper.withRedux(MyApp)

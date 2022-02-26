@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
@@ -13,11 +13,6 @@ import {
   DocumentData
 } from 'firebase/firestore'
 import { a, useTransition } from '@react-spring/web'
-import GoogleMap from 'components/googleMap/googleMap'
-import Modal from 'components/modal'
-import Marker from 'components/marker'
-import Button, { ButtonType } from 'components/button'
-import Spinner from 'components/spinner'
 import styled from 'styled-components'
 import {
   getAuth,
@@ -26,11 +21,18 @@ import {
   onAuthStateChanged,
   User
 } from 'firebase/auth'
+import { UseAppDispatch, UseAppSelector } from 'app/hooks'
+import GoogleMap from 'components/googleMap/googleMap'
+import Modal from 'components/modal'
+import Marker from 'components/marker'
+import Button, { ButtonType } from 'components/button'
+import Spinner from 'components/spinner'
 import GetUserLocation from 'util/getCurrentPosition'
 import { DEFAULT_POSITION } from 'assets/constant'
 import { ReactComponent as AddIcon } from 'assets/icon/add.svg'
 
 import { IFirebaseChatroom } from 'types/common'
+import { UpdateGeolocation } from 'features/geolocation'
 
 const HomeConatiner = styled.main``
 
@@ -114,9 +116,10 @@ const Home: NextPage = () => {
     QueryDocumentSnapshot<DocumentData>[]
   >([])
   const [map, setMap] = useState<google.maps.Map | null>(null)
-  const position = useRef<google.maps.LatLngLiteral>({ lat: 0, lng: 0 })
   const [openChatroom, setOpenChatroom] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
+  const dispatch = UseAppDispatch()
+  const { position } = UseAppSelector(state => state.geolocation)
 
   const goToChatroom = useCallback(
     async (user: User, latitude: number, longitude: number) => {
@@ -141,20 +144,16 @@ const Home: NextPage = () => {
   )
 
   const addChatroom = useCallback(async () => {
-    if (chatroomName === '') return
+    if (chatroomName === '' || !position?.lat || !position.lng) return
 
     try {
       onAuthStateChanged(auth, user => {
         if (user) {
-          goToChatroom(user, position.current.lat, position.current.lng)
+          goToChatroom(user, position.lat, position.lng)
         } else {
           signInWithPopup(auth, provider)
             .then(result => {
-              goToChatroom(
-                result.user,
-                position.current.lat,
-                position.current.lng
-              )
+              goToChatroom(result.user, position.lat, position.lng)
             })
             .catch(error => {
               throw new Error(error)
@@ -164,7 +163,7 @@ const Home: NextPage = () => {
     } catch (error) {
       console.log(error)
     }
-  }, [chatroomName, auth, goToChatroom])
+  }, [chatroomName, auth, goToChatroom, position?.lat, position?.lng])
 
   const handleOnKeyPress = (e: React.KeyboardEvent<HTMLInputElement>): void => {
     if (e.key === 'Enter') addChatroom()
@@ -182,13 +181,19 @@ const Home: NextPage = () => {
     try {
       const { latitude, longitude } = await GetUserLocation()
       map?.panTo({ lat: latitude, lng: longitude })
-      position.current = { lat: latitude, lng: longitude }
+      dispatch(
+        UpdateGeolocation({
+          lat: latitude,
+          lng: longitude
+        })
+      )
+      // position.current = { lat: latitude, lng: longitude }
       setOpenChatroom(true)
     } catch (error) {
       console.log(error)
     }
     setLoading(false)
-  }, [map])
+  }, [dispatch, map])
 
   const queryData = useCallback(async () => {
     // const NE = new GeoPoint(

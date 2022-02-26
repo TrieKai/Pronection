@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import GoogleMapReact, { Props } from 'google-map-react'
 import styled from 'styled-components'
-import GetUserLocation from 'util/getCurrentPosition'
+import { UseAppDispatch, UseAppSelector } from 'app/hooks'
+import { UpdateGeolocation } from 'features/geolocation'
 import Compass from 'components/compass'
+import GetUserLocation from 'util/getCurrentPosition'
 import { GoogleMapLayerStyles } from './asset'
 import { ReactComponent as GPSFixedIcon } from 'assets/icon/gps-fixed.svg'
 import { ReactComponent as AddIcon } from 'assets/icon/add.svg'
@@ -10,10 +12,6 @@ import { ReactComponent as MinusIcon } from 'assets/icon/minus.svg'
 
 interface IGoogleMap extends Props {
   setMap: React.Dispatch<React.SetStateAction<google.maps.Map<Element> | null>>
-}
-
-type ICoords<T> = {
-  [Property in keyof T]: T[Property] | null
 }
 
 const MapContainer = styled.main`
@@ -62,11 +60,12 @@ const ControlContainer = styled.div`
 
 const GoogleMap: React.FC<IGoogleMap> = (props): JSX.Element => {
   const { options, style, setMap, children } = props
+  const dispatch = UseAppDispatch()
+  const { position } = UseAppSelector(state => state.geolocation)
   const mapRef = useRef<google.maps.Map | null>(null)
-  const [geoPermission, setGeoPermission] = useState<boolean>(false)
-  const [currCoords, setCurrCoords] = useState<
-    ICoords<google.maps.LatLngLiteral>
-  >({ lat: null, lng: null })
+  const [geoPermission, setGeoPermission] = useState<boolean>(
+    !!position?.lat && !!position?.lng
+  )
 
   const onLoaded = useCallback(
     ({ map: googleMap }) => {
@@ -85,16 +84,26 @@ const GoogleMap: React.FC<IGoogleMap> = (props): JSX.Element => {
   }, [])
 
   const Locating = useCallback(() => {
-    GetUserLocation().then(position => {
-      mapRef.current?.panTo({ lat: position.latitude, lng: position.longitude })
+    const handleMap = (lat: number, lng: number) => {
+      mapRef.current?.panTo({ lat, lng })
       mapRef.current?.setZoom(14)
-      setGeoPermission(true)
-      setCurrCoords({
-        lat: position.latitude,
-        lng: position.longitude
+    }
+
+    if (geoPermission && position?.lat && position.lng) {
+      handleMap(position.lat, position.lng)
+    } else {
+      GetUserLocation().then(coord => {
+        handleMap(coord.latitude, coord.longitude)
+        dispatch(
+          UpdateGeolocation({
+            lat: coord.latitude,
+            lng: coord.longitude
+          })
+        )
+        setGeoPermission(true)
       })
-    })
-  }, [])
+    }
+  }, [dispatch, geoPermission, position?.lat, position?.lng])
 
   useEffect(() => {
     let watchId: number
@@ -102,10 +111,12 @@ const GoogleMap: React.FC<IGoogleMap> = (props): JSX.Element => {
       watchId = navigator.geolocation.watchPosition(
         position => {
           console.log(`currnent position:`, position)
-          setCurrCoords({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-          })
+          dispatch(
+            UpdateGeolocation({
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            })
+          )
         },
         error => {
           console.log(error)
@@ -115,7 +126,11 @@ const GoogleMap: React.FC<IGoogleMap> = (props): JSX.Element => {
     }
 
     return () => navigator.geolocation.clearWatch(watchId)
-  }, [geoPermission])
+  }, [dispatch, geoPermission])
+
+  useEffect(() => {
+    if (position?.lat && position?.lng) setGeoPermission(true)
+  }, [position?.lat, position?.lng])
 
   return (
     <MapContainer>
@@ -146,11 +161,9 @@ const GoogleMap: React.FC<IGoogleMap> = (props): JSX.Element => {
         {...props}
       >
         {children}
-        {geoPermission &&
-          currCoords.lat !== null &&
-          currCoords.lng !== null && (
-            <Compass lat={currCoords.lat} lng={currCoords.lng} />
-          )}
+        {geoPermission && position?.lat && position?.lng && (
+          <Compass lat={position.lat} lng={position.lng} />
+        )}
       </GoogleMapReact>
     </MapContainer>
   )
