@@ -17,9 +17,11 @@ import {
   signInWithPopup
 } from 'firebase/auth'
 import styled from 'styled-components'
+import localforage from 'localforage'
 import Message from 'components/message'
 import MessageInputArea from 'components/messageInputArea'
 import Button, { ButtonType } from 'components/button'
+import SendNotification from 'util/sendNotification'
 import { ReactComponent as ArrowIcon } from 'assets/icon/arrow.svg'
 
 import { IFirebaseChatroom, IUsers } from 'types/common'
@@ -134,6 +136,18 @@ const Chatroom: NextPage = () => {
       })
   }, [auth])
 
+  const sendNotification = useCallback(
+    (comment: string): void => {
+      const messagingTokenList = chatroomData.users
+        .filter(user => user.user_id !== uid)
+        .map(item => item.messaging_token)
+      messagingTokenList.forEach(
+        token => !!token && SendNotification(chatroomData.name, comment, token)
+      )
+    },
+    [chatroomData.name, chatroomData.users, uid]
+  )
+
   const sendMessage = useCallback(async (): Promise<void> => {
     if (comment === '') return
 
@@ -141,7 +155,8 @@ const Chatroom: NextPage = () => {
       const users: IUsers = {
         user_id: uid,
         user_name: auth.currentUser.displayName ?? '',
-        photo_url: auth.currentUser.photoURL ?? ''
+        photo_url: auth.currentUser.photoURL ?? '',
+        messaging_token: (await localforage.getItem('fcm_token')) ?? ''
       }
       await updateDoc(doc(db, 'chatrooms', chatroomId as string), {
         users: arrayUnion(users),
@@ -152,11 +167,20 @@ const Chatroom: NextPage = () => {
           timestamp: Date.now()
         })
       })
+      sendNotification(comment)
       setComment('')
     } else {
       handleLogin()
     }
-  }, [comment, auth.currentUser, uid, db, chatroomId, handleLogin])
+  }, [
+    comment,
+    auth.currentUser,
+    uid,
+    db,
+    chatroomId,
+    sendNotification,
+    handleLogin
+  ])
 
   useEffect(() => {
     if (chatroomId) {

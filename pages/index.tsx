@@ -21,6 +21,7 @@ import {
   onAuthStateChanged,
   User
 } from 'firebase/auth'
+import localforage from 'localforage'
 import { UseAppDispatch, UseAppSelector } from 'app/hooks'
 import GoogleMap from 'components/googleMap/googleMap'
 import Modal from 'components/modal'
@@ -28,6 +29,7 @@ import Marker from 'components/marker'
 import Button, { ButtonType } from 'components/button'
 import Spinner from 'components/spinner'
 import GetUserLocation from 'util/getCurrentPosition'
+import FirebaseCloudMessaging from 'util/webPush/webPush'
 import { DEFAULT_POSITION } from 'assets/constant'
 import { ReactComponent as AddIcon } from 'assets/icon/add.svg'
 
@@ -130,7 +132,8 @@ const Home: NextPage = () => {
           {
             user_id: user.uid,
             user_name: user.displayName ?? '',
-            photo_url: user.photoURL ?? ''
+            photo_url: user.photoURL ?? '',
+            messaging_token: (await localforage.getItem('fcm_token')) ?? ''
           }
         ],
         messages: [],
@@ -227,6 +230,10 @@ const Home: NextPage = () => {
   useEffect(() => {
     queryData()
   }, [queryData])
+
+  useEffect(() => {
+    FirebaseCloudMessaging.init()
+  }, [])
 
   const createRoomTransitions = useTransition(openChatroom, {
     from: { transform: 'translateY(100%)' },

@@ -1,7 +1,7 @@
 const GetUserLocation = (
-  enableHighAccuracy: boolean = true,
-  timeout: number = 5000,
-  maximumAge: number = 0
+  enableHighAccuracy = true,
+  timeout = 5000,
+  maximumAge = 0
 ): Promise<GeolocationCoordinates> => {
   return new Promise((resolve, reject) => {
     navigator.geolocation.getCurrentPosition(

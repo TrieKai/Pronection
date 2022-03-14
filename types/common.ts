@@ -19,6 +19,7 @@ export interface IUsers {
   user_id: string
   user_name: string
   photo_url: string
+  messaging_token: string
 }
 
 export interface IMarker {
