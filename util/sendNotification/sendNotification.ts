@@ -1,13 +1,21 @@
 import axios from 'axios'
+import { INotification } from 'types/common'
 
-const SendNotification = (title: string, body: string, token: string): void => {
+const SendNotification = (
+  title: string,
+  body: string,
+  icon: string,
+  token: string
+): void => {
+  const notification: INotification = {
+    title,
+    body,
+    icon
+  }
   axios.post(
     'https://fcm.googleapis.com/fcm/send',
     {
-      notification: {
-        title: title,
-        body: body
-      },
+      notification,
       to: token
     },
     {

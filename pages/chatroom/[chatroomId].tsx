@@ -143,10 +143,17 @@ const Chatroom: NextPage = () => {
         .filter(user => user.user_id !== uid)
         .map(item => item.messaging_token)
       messagingTokenList.forEach(
-        token => !!token && SendNotification(chatroomData.name, comment, token)
+        token =>
+          !!token &&
+          SendNotification(
+            chatroomData.name,
+            comment,
+            auth.currentUser?.photoURL ?? '/location-pin.png',
+            token
+          )
       )
     },
-    [chatroomData.name, chatroomData.users, uid]
+    [auth.currentUser?.photoURL, chatroomData.name, chatroomData.users, uid]
   )
 
   const sendMessage = useCallback(async (): Promise<void> => {

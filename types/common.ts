@@ -26,3 +26,9 @@ export interface IMarker {
   lat: number
   lng: number
 }
+
+export interface INotification {
+  title: string
+  body: string
+  icon: string
+}
