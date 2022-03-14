@@ -3,6 +3,7 @@ import { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import {
+  arrayRemove,
   arrayUnion,
   doc,
   GeoPoint,
@@ -152,11 +153,21 @@ const Chatroom: NextPage = () => {
     if (comment === '') return
 
     if (auth.currentUser && uid) {
+      const messagingToken =
+        (await localforage.getItem<string>('fcm_token')) ?? ''
+      // sync with database, if user is exist and token is changed, then remove it
+      const myself = chatroomData.users.find(user => user.user_id === uid)
+      if (!!myself && myself.messaging_token !== messagingToken) {
+        await updateDoc(doc(db, 'chatrooms', chatroomId as string), {
+          users: arrayRemove(myself)
+        })
+      }
+
       const users: IUsers = {
         user_id: uid,
         user_name: auth.currentUser.displayName ?? '',
         photo_url: auth.currentUser.photoURL ?? '',
-        messaging_token: (await localforage.getItem('fcm_token')) ?? ''
+        messaging_token: messagingToken
       }
       await updateDoc(doc(db, 'chatrooms', chatroomId as string), {
         users: arrayUnion(users),
@@ -176,6 +187,7 @@ const Chatroom: NextPage = () => {
     comment,
     auth.currentUser,
     uid,
+    chatroomData.users,
     db,
     chatroomId,
     sendNotification,
