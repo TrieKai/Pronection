@@ -18,12 +18,12 @@ messaging.onBackgroundMessage(payload => {
     payload
   )
   // Customize notification here
-  const data = payload.notification
-  const notificationTitle = data.title
-  const notificationOptions = {
-    body: data.body,
-    icon: data.icon
-  }
+  // const data = payload.notification
+  // const notificationTitle = data.title
+  // const notificationOptions = {
+  //   body: data.body,
+  //   icon: data.icon
+  // }
 
-  self.registration.showNotification(notificationTitle, notificationOptions)
+  // self.registration.showNotification(notificationTitle, notificationOptions)
 })

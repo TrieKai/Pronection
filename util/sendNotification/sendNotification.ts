@@ -5,6 +5,7 @@ const SendNotification = (
   title: string,
   body: string,
   icon: string,
+  url: string,
   token: string
 ): void => {
   const notification: INotification = {
@@ -16,7 +17,8 @@ const SendNotification = (
     'https://fcm.googleapis.com/fcm/send',
     {
       notification,
-      to: token
+      to: token,
+      webpush: { fcm_options: { link: 'https://pronection.herokuapp.com' } }
     },
     {
       headers: {

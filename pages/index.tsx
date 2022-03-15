@@ -29,7 +29,6 @@ import Marker from 'components/marker'
 import Button, { ButtonType } from 'components/button'
 import Spinner from 'components/spinner'
 import GetUserLocation from 'util/getCurrentPosition'
-import FirebaseCloudMessaging from 'util/webPush/webPush'
 import { DEFAULT_POSITION } from 'assets/constant'
 import { ReactComponent as AddIcon } from 'assets/icon/add.svg'
 
@@ -230,10 +229,6 @@ const Home: NextPage = () => {
   useEffect(() => {
     queryData()
   }, [queryData])
-
-  useEffect(() => {
-    FirebaseCloudMessaging.init()
-  }, [])
 
   const createRoomTransitions = useTransition(openChatroom, {
     from: { transform: 'translateY(100%)' },

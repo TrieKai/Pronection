@@ -23,6 +23,7 @@ import Message from 'components/message'
 import MessageInputArea from 'components/messageInputArea'
 import Button, { ButtonType } from 'components/button'
 import SendNotification from 'util/sendNotification'
+import FirebaseCloudMessaging from 'util/webPush/webPush'
 import { ReactComponent as ArrowIcon } from 'assets/icon/arrow.svg'
 
 import { IFirebaseChatroom, IUsers } from 'types/common'
@@ -149,11 +150,18 @@ const Chatroom: NextPage = () => {
             chatroomData.name,
             comment,
             auth.currentUser?.photoURL ?? '/location-pin.png',
+            `https://pronection.herokuapp.com/chatroom/${chatroomId}`,
             token
           )
       )
     },
-    [auth.currentUser?.photoURL, chatroomData.name, chatroomData.users, uid]
+    [
+      auth.currentUser?.photoURL,
+      chatroomData.name,
+      chatroomData.users,
+      chatroomId,
+      uid
+    ]
   )
 
   const sendMessage = useCallback(async (): Promise<void> => {
@@ -248,6 +256,10 @@ const Chatroom: NextPage = () => {
       }
     })
   }, [uid, auth])
+
+  useEffect(() => {
+    FirebaseCloudMessaging.init()
+  }, [])
 
   return (
     <>
