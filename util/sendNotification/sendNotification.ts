@@ -11,14 +11,14 @@ const SendNotification = (
   const notification: INotification = {
     title,
     body,
-    icon
+    icon,
+    click_action: url
   }
   axios.post(
     'https://fcm.googleapis.com/fcm/send',
     {
       notification,
-      to: token,
-      webpush: { fcm_options: { link: 'https://pronection.herokuapp.com' } }
+      to: token
     },
     {
       headers: {

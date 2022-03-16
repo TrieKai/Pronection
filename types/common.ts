@@ -31,4 +31,5 @@ export interface INotification {
   title: string
   body: string
   icon: string
+  click_action: string
 }
