@@ -109,7 +109,8 @@ const CreateRoomContainer = styled(a.div)`
 `
 
 const Home: NextPage = () => {
-  const { push } = useRouter()
+  const { query: routerQuery, push } = useRouter()
+  const { lat: urlLat, lng: urlLng } = routerQuery
   const auth = getAuth()
   const db = getFirestore()
   const [chatroomName, setChatRoomName] = useState<string>('')
@@ -226,15 +227,26 @@ const Home: NextPage = () => {
     setChatroomList(querySnapshot.docs)
   }, [db])
 
-  useEffect(() => {
-    queryData()
-  }, [queryData])
-
   const createRoomTransitions = useTransition(openChatroom, {
     from: { transform: 'translateY(100%)' },
     enter: { transform: 'translateY(0px)' },
     leave: { transform: 'translateY(200%)' }
   })
+
+  const mapOnChange = () => {
+    const currLat = map?.getCenter().lat()
+    const currLng = map?.getCenter().lng()
+    if (!!currLat && !!currLng) push({ query: { lat: currLat, lng: currLng } })
+  }
+
+  useEffect(() => {
+    queryData()
+  }, [queryData])
+
+  useEffect(() => {
+    if (!!map && !!urlLat && !!urlLng)
+      map?.panTo({ lat: Number(urlLat), lng: Number(urlLng) })
+  }, [urlLat, urlLng, map])
 
   return (
     <>
@@ -252,6 +264,7 @@ const Home: NextPage = () => {
             key: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string
           }}
           setMap={setMap}
+          onChange={mapOnChange}
         >
           {chatroomList
             .sort((prev, next) => {

@@ -1,5 +1,5 @@
 import { createRef, useCallback, useEffect, useRef, useState } from 'react'
-import { NextPage } from 'next'
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import {
@@ -27,6 +27,10 @@ import FirebaseCloudMessaging from 'util/webPush/webPush'
 import { ReactComponent as ArrowIcon } from 'assets/icon/arrow.svg'
 
 import { IFirebaseChatroom, IUsers } from 'types/common'
+
+interface IChatroom {
+  hostname: string | null
+}
 
 const DEFAULT_CHATROOM_DATA: IFirebaseChatroom = {
   create_at: 0,
@@ -95,8 +99,11 @@ const ChatroomHeader = styled.div`
 
 const provider = new GoogleAuthProvider()
 
-const Chatroom: NextPage = () => {
+const Chatroom = ({
+  hostname
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const {
+    back,
     query: { chatroomId },
     push
   } = useRouter()
@@ -209,6 +216,15 @@ const Chatroom: NextPage = () => {
     handleLogin
   ])
 
+  const handleBack = useCallback(() => {
+    if (!hostname) {
+      push('/')
+      return
+    }
+    const regex = new RegExp(hostname)
+    regex.test(document.referrer) ? back() : push('/')
+  }, [back, hostname, push])
+
   useEffect(() => {
     if (chatroomId) {
       const unsubscribe = onSnapshot(
@@ -270,7 +286,7 @@ const Chatroom: NextPage = () => {
       </Head>
       <ChatroomHeader>
         <span className='back-icon'>
-          <ArrowIcon onClick={() => push('/')} />
+          <ArrowIcon onClick={handleBack} />
         </span>
         <span className='chatroom-name'>{chatroomData.name}</span>
       </ChatroomHeader>
@@ -311,5 +327,11 @@ const Chatroom: NextPage = () => {
     </>
   )
 }
+
+export const getServerSideProps: GetServerSideProps<IChatroom> = async ({
+  req
+}) => ({
+  props: { hostname: req.headers.host || null }
+})
 
 export default Chatroom
