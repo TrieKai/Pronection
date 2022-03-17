@@ -1,7 +1,6 @@
 import { createRef, useCallback, useEffect, useRef, useState } from 'react'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
-import Head from 'next/head'
 import {
   arrayRemove,
   arrayUnion,
@@ -279,11 +278,7 @@ const Chatroom = ({
 
   return (
     <>
-      <Head>
-        <title>Pronection | {chatroomData.name}</title>
-        <meta name='description' content='Chat with people nearby' />
-        <link rel='icon' href='/location-pin.png' />
-      </Head>
+      {/* TODO: Custom head title */}
       <ChatroomHeader>
         <span className='back-icon'>
           <ArrowIcon onClick={handleBack} />
