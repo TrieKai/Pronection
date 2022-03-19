@@ -21,6 +21,7 @@ import localforage from 'localforage'
 import Message from 'components/message'
 import MessageInputArea from 'components/messageInputArea'
 import Button, { ButtonType } from 'components/button'
+import Spinner from 'components/spinner'
 import SendNotification from 'util/sendNotification'
 import FirebaseCloudMessaging from 'util/webPush/webPush'
 import { ReactComponent as ArrowIcon } from 'assets/icon/arrow.svg'
@@ -64,6 +65,13 @@ const ChatroomContainer = styled.div`
     .button-box {
       margin-left: 8px;
     }
+  }
+
+  .spinner-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 `
 
@@ -117,6 +125,13 @@ const Chatroom = ({
   const messageRefs = useRef<(HTMLDivElement | null)[]>([])
   const isScrollToBottom = useRef<boolean>(false)
 
+  const checkIsLoading = useCallback((): boolean => {
+    return (
+      chatroomData.create_at === DEFAULT_CHATROOM_DATA.create_at &&
+      chatroomData.name === DEFAULT_CHATROOM_DATA.name
+    )
+  }, [chatroomData.create_at, chatroomData.name])
+
   const scrollToLatestMessage = useCallback((): void => {
     messageRefs.current[messageRefs.current.length - 1]?.scrollIntoView({
       behavior: 'smooth'
@@ -124,7 +139,7 @@ const Chatroom = ({
   }, [])
 
   const chatroomOnScroll = useCallback(
-    (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
+    (e: React.UIEvent<HTMLDivElement, UIEvent>): void => {
       // check chatroom if scrolled to bottom
       isScrollToBottom.current =
         e.currentTarget.scrollTop ===
@@ -294,6 +309,11 @@ const Chatroom = ({
                 Login
               </Button>
             </div>
+          </div>
+        )}
+        {checkIsLoading() && (
+          <div className='spinner-container'>
+            <Spinner color='#c8d0ff' />
           </div>
         )}
         {chatroomData.messages.map((message, i) => (

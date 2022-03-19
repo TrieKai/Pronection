@@ -1,6 +1,10 @@
 import styled from 'styled-components'
 
-const SpinnerContainer = styled.div`
+interface ISpinner {
+  color?: string
+}
+
+const SpinnerContainer = styled.div<ISpinner>`
   display: inline-block;
   position: relative;
   width: 80px;
@@ -11,7 +15,7 @@ const SpinnerContainer = styled.div`
     position: absolute;
     left: 8px;
     width: 16px;
-    background: #fff;
+    background: ${({ color }) => color};
     animation: lds-facebook 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
   }
 
@@ -43,8 +47,8 @@ const SpinnerContainer = styled.div`
   }
 `
 
-const Spinner: React.VFC = (): JSX.Element => (
-  <SpinnerContainer>
+const Spinner: React.VFC<ISpinner> = ({ color = '#fff' }): JSX.Element => (
+  <SpinnerContainer color={color}>
     <div></div>
     <div></div>
     <div></div>
