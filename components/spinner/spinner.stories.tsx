@@ -22,5 +22,5 @@ const Template: ComponentStory<typeof Spinner> = args => (
 
 export const Normal = Template.bind({})
 Normal.args = {
-  children: 'button'
+  color: '#a0a0a0'
 }
