@@ -1,11 +1,13 @@
 import { createRef, useCallback, useEffect, useRef, useState } from 'react'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
+import Error from 'next/error'
 import {
   arrayRemove,
   arrayUnion,
   doc,
   GeoPoint,
+  getDoc,
   getFirestore,
   onSnapshot,
   updateDoc
@@ -29,6 +31,7 @@ import { ReactComponent as ArrowIcon } from 'assets/icon/arrow.svg'
 import { IFirebaseChatroom, IUsers } from 'types/common'
 
 interface IChatroom {
+  errorCode: number | false
   hostname: string | null
 }
 
@@ -107,6 +110,7 @@ const ChatroomHeader = styled.div`
 const provider = new GoogleAuthProvider()
 
 const Chatroom = ({
+  errorCode,
   hostname
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const {
@@ -240,7 +244,7 @@ const Chatroom = ({
   }, [back, hostname, push])
 
   useEffect(() => {
-    if (chatroomId) {
+    if (chatroomId && !errorCode) {
       const unsubscribe = onSnapshot(
         doc(db, 'chatrooms', chatroomId as string),
         doc => {
@@ -252,7 +256,7 @@ const Chatroom = ({
 
       return () => unsubscribe()
     }
-  }, [db, chatroomId])
+  }, [chatroomId, db, errorCode])
 
   useEffect(() => {
     messageRefs.current = Array(chatroomData.messages.length)
@@ -288,8 +292,10 @@ const Chatroom = ({
   }, [uid, auth])
 
   useEffect(() => {
-    FirebaseCloudMessaging.init()
-  }, [])
+    !errorCode && FirebaseCloudMessaging.init()
+  }, [errorCode])
+
+  if (errorCode) return <Error statusCode={errorCode} />
 
   return (
     <>
@@ -344,9 +350,17 @@ const Chatroom = ({
 }
 
 export const getServerSideProps: GetServerSideProps<IChatroom> = async ({
+  query,
   req
-}) => ({
-  props: { hostname: req.headers.host || null }
-})
+}) => {
+  const { chatroomId } = query
+  const docRef = doc(getFirestore(), 'chatrooms', chatroomId as string)
+  const docSnap = await getDoc(docRef)
+  const errorCode = !docSnap.exists() ? 404 : false
+
+  return {
+    props: { errorCode, hostname: req.headers.host || null }
+  }
+}
 
 export default Chatroom
