@@ -1,1 +1,1 @@
-export { default } from './webPush'
+export { FCMInit } from './webPush'

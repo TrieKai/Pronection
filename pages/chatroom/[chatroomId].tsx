@@ -25,7 +25,7 @@ import MessageInputArea from 'components/messageInputArea'
 import Button, { ButtonType } from 'components/button'
 import Spinner from 'components/spinner'
 import SendNotification from 'util/sendNotification'
-import FirebaseCloudMessaging from 'util/webPush/webPush'
+import { FCMInit } from 'util/webPush/webPush'
 import { ReactComponent as ArrowIcon } from 'assets/icon/arrow.svg'
 
 import { IFirebaseChatroom, IUsers } from 'types/common'
@@ -292,7 +292,7 @@ const Chatroom = ({
   }, [uid, auth])
 
   useEffect(() => {
-    !errorCode && FirebaseCloudMessaging.init()
+    !errorCode && FCMInit()
   }, [errorCode])
 
   if (errorCode) return <Error statusCode={errorCode} />
