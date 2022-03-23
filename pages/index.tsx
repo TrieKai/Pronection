@@ -154,13 +154,9 @@ const Home: NextPage = () => {
         if (user) {
           goToChatroom(user, position.lat, position.lng)
         } else {
-          signInWithPopup(auth, provider)
-            .then(result => {
-              goToChatroom(result.user, position.lat, position.lng)
-            })
-            .catch(error => {
-              throw new Error(error)
-            })
+          signInWithPopup(auth, provider).catch(error => {
+            throw new Error(error)
+          })
         }
       })
     } catch (error) {
