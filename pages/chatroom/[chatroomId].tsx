@@ -110,6 +110,8 @@ const ChatroomHeader = styled.div`
 
 const provider = new GoogleAuthProvider()
 
+const defaultAvatarPath = '/icon/no-photo.svg'
+
 const Chatroom = ({
   errorCode,
   hostname
@@ -329,11 +331,11 @@ const Chatroom = ({
             isSelf={message.user_id === uid}
             userAvatarUrl={
               chatroomData.users.find(item => item.user_id === message.user_id)
-                ?.photo_url ?? ''
+                ?.photo_url ?? defaultAvatarPath
             }
             userName={
               chatroomData.users.find(item => item.user_id === message.user_id)
-                ?.user_name ?? ''
+                ?.user_name ?? defaultAvatarPath
             }
             text={message.text}
             time={message.timestamp}
