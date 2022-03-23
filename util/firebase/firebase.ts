@@ -1,4 +1,4 @@
-import { initializeApp } from 'firebase/app'
+import { getApp, initializeApp } from 'firebase/app'
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_KEY,
@@ -11,5 +11,10 @@ const firebaseConfig = {
 }
 
 export const FirebaseInit = () => {
-  initializeApp(firebaseConfig)
+  try {
+    getApp()
+    return
+  } catch (error) {
+    initializeApp(firebaseConfig)
+  }
 }

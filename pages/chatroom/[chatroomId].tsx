@@ -26,6 +26,7 @@ import Button, { ButtonType } from 'components/button'
 import Spinner from 'components/spinner'
 import SendNotification from 'util/sendNotification'
 import { FCMInit } from 'util/webPush/webPush'
+import { FirebaseInit } from 'util/firebase'
 import { ReactComponent as ArrowIcon } from 'assets/icon/arrow.svg'
 
 import { IFirebaseChatroom, IUsers } from 'types/common'
@@ -354,6 +355,7 @@ export const getServerSideProps: GetServerSideProps<IChatroom> = async ({
   req
 }) => {
   const { chatroomId } = query
+  FirebaseInit()
   const docRef = doc(getFirestore(), 'chatrooms', chatroomId as string)
   const docSnap = await getDoc(docRef)
   const errorCode = !docSnap.exists() ? 404 : false
