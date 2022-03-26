@@ -38,6 +38,7 @@ const ControlContainer = styled.div`
     height: 32px;
     background: #fff;
     border-radius: 100%;
+    -webkit-tap-highlight-color: transparent;
     cursor: pointer;
 
     svg [data-class='cls-1'] {

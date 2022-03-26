@@ -56,6 +56,7 @@ const ChatroomHeader = styled.div`
   .back-icon {
     width: 40px;
     height: 40px;
+    -webkit-tap-highlight-color: transparent;
     cursor: pointer;
 
     svg {

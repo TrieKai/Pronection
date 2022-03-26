@@ -31,6 +31,7 @@ const SendContainer = styled.div`
     height: 40px;
     background: #91a0fb;
     border-radius: 100%;
+    -webkit-tap-highlight-color: transparent;
     cursor: pointer;
   }
 `

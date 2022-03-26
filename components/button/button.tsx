@@ -25,6 +25,7 @@ const ButtonContainer = styled.div<IButtonStyles>`
   border: ${({ type }) =>
     type === ButtonType.primary ? 'unset' : '#fff 2px solid'};
   color: #fff;
+  -webkit-tap-highlight-color: transparent;
   cursor: pointer;
 
   &:hover {
