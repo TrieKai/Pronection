@@ -1,7 +1,6 @@
 import { createRef, useCallback, useEffect, useRef, useState } from 'react'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
-import Error from 'next/error'
 import {
   arrayRemove,
   arrayUnion,
@@ -24,15 +23,16 @@ import Message from 'components/message'
 import MessageInputArea from 'components/messageInputArea'
 import Button, { ButtonType } from 'components/button'
 import Spinner from 'components/spinner'
+import CountdownTimer from 'components/countdownTimer'
 import SendNotification from 'util/sendNotification'
 import { FCMInit } from 'util/webPush/webPush'
 import { FirebaseInit } from 'util/firebase'
+import { ONE_DAY } from 'assets/constant'
 import { ReactComponent as ArrowIcon } from 'assets/icon/arrow.svg'
 
 import { IFirebaseChatroom, IUsers } from 'types/common'
 
 interface IChatroom {
-  errorCode: number | false
   hostname: string | null
 }
 
@@ -43,47 +43,15 @@ const DEFAULT_CHATROOM_DATA: IFirebaseChatroom = {
   position: new GeoPoint(0, 0),
   users: []
 }
-
-const ChatroomContainer = styled.div`
-  position: relative;
-  padding: 16px;
-  width: 100%;
-  height: calc(100% - 64px - 56px);
-  background: #f5f8f9;
-  overflow-y: auto;
-
-  .top-bar {
-    position: fixed;
-    top: 64px;
-    right: 0;
-    left: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 56px;
-    background: #91a0fb;
-    color: #fff;
-    border-bottom: 1px solid #8898ff;
-
-    .button-box {
-      margin-left: 8px;
-    }
-  }
-
-  .spinner-container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
-`
+const headerHeight = 64
+const timerHeight = 36
+const messageInputHeight = 56
 
 const ChatroomHeader = styled.div`
   display: flex;
   align-items: center;
   width: 100%;
-  height: 64px;
+  height: ${headerHeight}px;
 
   .back-icon {
     width: 40px;
@@ -108,12 +76,59 @@ const ChatroomHeader = styled.div`
   }
 `
 
+const ChatroomTimer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: ${timerHeight}px;
+  background: #535faa;
+  color: #fff;
+  font-size: 24px;
+`
+
+const ChatroomInner = styled.div`
+  position: relative;
+  padding: 16px;
+  width: 100%;
+  height: calc(
+    100% - ${headerHeight}px - ${timerHeight}px - ${messageInputHeight}px
+  );
+  background: #f5f8f9;
+  overflow-y: auto;
+
+  .top-bar {
+    position: fixed;
+    top: 100px;
+    right: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 56px;
+    background: #91a0fb;
+    color: #fff;
+    border-bottom: 1px solid #8898ff;
+
+    .button-box {
+      margin-left: 8px;
+    }
+  }
+
+  .spinner-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+`
+
 const provider = new GoogleAuthProvider()
 
 const defaultAvatarPath = '/icon/no-photo.svg'
 
 const Chatroom = ({
-  errorCode,
   hostname
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const {
@@ -247,7 +262,7 @@ const Chatroom = ({
   }, [back, hostname, push])
 
   useEffect(() => {
-    if (chatroomId && !errorCode) {
+    if (chatroomId) {
       const unsubscribe = onSnapshot(
         doc(db, 'chatrooms', chatroomId as string),
         doc => {
@@ -259,7 +274,7 @@ const Chatroom = ({
 
       return () => unsubscribe()
     }
-  }, [chatroomId, db, errorCode])
+  }, [chatroomId, db])
 
   useEffect(() => {
     messageRefs.current = Array(chatroomData.messages.length)
@@ -295,10 +310,8 @@ const Chatroom = ({
   }, [uid, auth])
 
   useEffect(() => {
-    !errorCode && FCMInit()
-  }, [errorCode])
-
-  if (errorCode) return <Error statusCode={errorCode} />
+    FCMInit()
+  }, [])
 
   return (
     <>
@@ -309,7 +322,15 @@ const Chatroom = ({
         </span>
         <span className='chatroom-name'>{chatroomData.name}</span>
       </ChatroomHeader>
-      <ChatroomContainer onScroll={chatroomOnScroll}>
+      <ChatroomTimer>
+        <CountdownTimer
+          totalTimeRemaining={
+            chatroomData.create_at + ONE_DAY - new Date().getTime()
+          }
+          onEnd={handleBack}
+        />
+      </ChatroomTimer>
+      <ChatroomInner onScroll={chatroomOnScroll}>
         {uid === '' && (
           <div className='top-bar'>
             請先登入唷！
@@ -342,7 +363,7 @@ const Chatroom = ({
             key={i}
           />
         ))}
-      </ChatroomContainer>
+      </ChatroomInner>
       <MessageInputArea
         comment={comment}
         setComment={setComment}
@@ -360,10 +381,14 @@ export const getServerSideProps: GetServerSideProps<IChatroom> = async ({
   FirebaseInit()
   const docRef = doc(getFirestore(), 'chatrooms', chatroomId as string)
   const docSnap = await getDoc(docRef)
-  const errorCode = !docSnap.exists() ? 404 : false
+  const data = docSnap.data() as IFirebaseChatroom
+  const isExpired = (data?.create_at ?? 0) < new Date().getTime() - ONE_DAY
+
+  const isError = !docSnap.exists() || isExpired
 
   return {
-    props: { errorCode, hostname: req.headers.host || null }
+    props: { hostname: req.headers.host || null },
+    notFound: isError
   }
 }
 

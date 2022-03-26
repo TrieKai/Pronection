@@ -10,7 +10,8 @@ import {
   query,
   getDocs,
   QueryDocumentSnapshot,
-  DocumentData
+  DocumentData,
+  where
 } from 'firebase/firestore'
 import { a, useTransition } from '@react-spring/web'
 import styled from 'styled-components'
@@ -29,7 +30,7 @@ import Marker from 'components/marker'
 import Button, { ButtonType } from 'components/button'
 import Spinner from 'components/spinner'
 import GetUserLocation from 'util/getCurrentPosition'
-import { DEFAULT_POSITION } from 'assets/constant'
+import { DEFAULT_POSITION, ONE_DAY } from 'assets/constant'
 import { ReactComponent as AddIcon } from 'assets/icon/add.svg'
 
 import { IFirebaseChatroom } from 'types/common'
@@ -217,7 +218,10 @@ const Home: NextPage = () => {
     //   where('position', '<=', NE),
     //   where('position', '>=', SW)
     // )
-    const q = query(collection(db, 'chatrooms'))
+    const q = query(
+      collection(db, 'chatrooms'),
+      where('create_at', '>=', new Date().getTime() - ONE_DAY)
+    )
     const querySnapshot = await getDocs(q)
     console.log(querySnapshot.docs)
     setChatroomList(querySnapshot.docs)
