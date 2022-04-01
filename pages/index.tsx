@@ -96,9 +96,19 @@ const CreateRoomContainer = styled(a.div)`
     }
 
     .input {
-      padding: 0 5px;
+      padding: 0px 5px;
       width: 100%;
       height: 30px;
+      appearance: none;
+      color: #314146;
+      border: solid 1px rgba(40, 70, 80, 0.6);
+      border-radius: 4px;
+      transition: all 0.3s;
+
+      &:hover,
+      &:focus {
+        border-color: #6777e2;
+      }
     }
   }
 
