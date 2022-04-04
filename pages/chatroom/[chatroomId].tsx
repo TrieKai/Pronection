@@ -253,7 +253,7 @@ const Chatroom = ({
     handleLogin
   ])
 
-  const handleBack = useCallback(() => {
+  const handleBack = useCallback((): void => {
     if (!hostname) {
       push('/')
       return

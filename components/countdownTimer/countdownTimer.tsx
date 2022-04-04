@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react'
+import Pad from 'util/pad'
 
 interface ICountdownTimer {
   totalTimeRemaining: number
   onEnd: () => void
 }
+
+const timePlaces = 2
 
 const timeFormat = (time: number, isInit: boolean): string => {
   const hours = Math.floor(time / 1000 / 60 / 60) % 24
@@ -12,9 +15,9 @@ const timeFormat = (time: number, isInit: boolean): string => {
 
   if (isInit) return '--:--:--'
 
-  return `${hours >= 0 ? hours : 0}:${minutes >= 0 ? minutes : 0}:${
-    seconds >= 0 ? seconds : 0
-  }`
+  return `${hours >= 0 ? Pad(hours, timePlaces) : Pad(0, timePlaces)}:${
+    minutes >= 0 ? Pad(minutes, timePlaces) : Pad(0, timePlaces)
+  }:${seconds >= 0 ? Pad(seconds, timePlaces) : Pad(0, timePlaces)}`
 }
 
 const CountdownTimer: React.VFC<ICountdownTimer> = ({
