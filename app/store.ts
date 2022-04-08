@@ -1,9 +1,11 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit'
 import { createWrapper, HYDRATE } from 'next-redux-wrapper'
 import { geolocationReducer } from 'features/geolocation'
+import { loadingReducer } from 'features/loading'
 
 const combinedReducer = combineReducers({
-  geolocation: geolocationReducer
+  geolocation: geolocationReducer,
+  loading: loadingReducer
 })
 
 const reducer: typeof combinedReducer = (state, action) => {

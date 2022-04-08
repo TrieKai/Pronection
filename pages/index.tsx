@@ -35,6 +35,7 @@ import { ReactComponent as AddIcon } from 'assets/icon/add.svg'
 
 import { IFirebaseChatroom } from 'types/common'
 import { UpdateGeolocation } from 'features/geolocation'
+import { SetLoading } from 'features/loading'
 
 const HomeConatiner = styled.main``
 
@@ -131,9 +132,14 @@ const Home: NextPage = () => {
   >([])
   const [map, setMap] = useState<google.maps.Map | null>(null)
   const [openChatroom, setOpenChatroom] = useState<boolean>(false)
-  const [loading, setLoading] = useState<boolean>(false)
   const dispatch = UseAppDispatch()
-  const { position } = UseAppSelector(state => state.geolocation)
+  const {
+    geolocation: { position },
+    loading: { status: loadingStatus }
+  } = UseAppSelector(state => ({
+    geolocation: state.geolocation,
+    loading: state.loading
+  }))
 
   const goToChatroom = useCallback(
     async (user: User, latitude: number, longitude: number) => {
@@ -193,7 +199,7 @@ const Home: NextPage = () => {
       setOpenChatroom(true)
     }
 
-    setLoading(true)
+    dispatch(SetLoading(true))
     if (position?.lat && position?.lng) {
       handleMap(position.lat, position.lng)
     } else {
@@ -210,7 +216,7 @@ const Home: NextPage = () => {
         console.log(error)
       }
     }
-    setLoading(false)
+    dispatch(SetLoading(false))
   }, [dispatch, map, position?.lat, position?.lng])
 
   const queryData = useCallback(async () => {
@@ -302,7 +308,7 @@ const Home: NextPage = () => {
         <AddBox onClick={openCreateRoom}>
           <AddIcon />
         </AddBox>
-        <Modal show={loading} position={'center'}>
+        <Modal show={loadingStatus} position={'center'}>
           <Spinner />
         </Modal>
         {createRoomTransitions(({ transform }, item) =>
