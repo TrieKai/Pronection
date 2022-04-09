@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
@@ -132,6 +132,7 @@ const Home: NextPage = () => {
   >([])
   const [map, setMap] = useState<google.maps.Map | null>(null)
   const [openChatroom, setOpenChatroom] = useState<boolean>(false)
+  const chatroomNameInputRef = useRef<HTMLInputElement>(null)
   const dispatch = UseAppDispatch()
   const {
     geolocation: { position },
@@ -207,6 +208,7 @@ const Home: NextPage = () => {
     const handleMap = (lat: number, lng: number) => {
       map?.panTo({ lat, lng })
       setOpenChatroom(true)
+      chatroomNameInputRef.current?.focus()
     }
 
     dispatch(SetLoading(true))
@@ -338,6 +340,7 @@ const Home: NextPage = () => {
                 <span className='text'>聊天室名稱</span>
                 <div className='input-box'>
                   <input
+                    ref={chatroomNameInputRef}
                     type='text'
                     className='input'
                     value={chatroomName}

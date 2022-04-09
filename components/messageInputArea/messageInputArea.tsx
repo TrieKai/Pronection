@@ -1,11 +1,9 @@
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import styled from 'styled-components'
 import { ReactComponent as SendIcon } from 'assets/icon/send.svg'
 
 interface IMessageInputArea {
-  comment: string
-  setComment: React.Dispatch<React.SetStateAction<string>>
-  sendMessage: () => void
+  sendMessage?: (comment: string) => void
 }
 
 const SendContainer = styled.div`
@@ -37,12 +35,17 @@ const SendContainer = styled.div`
 `
 
 const TypingArea: React.VFC<IMessageInputArea> = ({
-  comment,
-  setComment,
   sendMessage
 }): JSX.Element => {
+  const [comment, setComment] = useState<string>('')
+
+  const handleSendMessage = useCallback(() => {
+    setComment('')
+    sendMessage && sendMessage(comment)
+  }, [comment, sendMessage])
+
   const handleOnKeyPress = (e: React.KeyboardEvent<HTMLInputElement>): void => {
-    if (e.key === 'Enter') sendMessage()
+    if (e.key === 'Enter') handleSendMessage()
   }
 
   const handleOnChange = useCallback(
@@ -62,7 +65,7 @@ const TypingArea: React.VFC<IMessageInputArea> = ({
           onChange={handleOnChange}
           onKeyPress={handleOnKeyPress}
         />
-        <span className='send-button' onClick={sendMessage}>
+        <span className='send-button' onClick={handleSendMessage} title='送出'>
           <SendIcon />
         </span>
       </SendContainer>

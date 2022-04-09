@@ -139,7 +139,6 @@ const Chatroom = ({}: InferGetServerSidePropsType<
   const db = getFirestore()
   const firstRender = useRef<boolean>(true)
   const [uid, setUid] = useState<string | null>(null)
-  const [comment, setComment] = useState<string>('')
   const [chatroomData, setChatroomData] = useState<IFirebaseChatroom>(
     DEFAULT_CHATROOM_DATA
   )
@@ -211,50 +210,51 @@ const Chatroom = ({}: InferGetServerSidePropsType<
     ]
   )
 
-  const sendMessage = useCallback(async (): Promise<void> => {
-    if (comment === '') return
+  const sendFCM = useCallback(
+    async (comment: string): Promise<void> => {
+      if (comment === '') return
 
-    if (auth.currentUser && uid) {
-      const messagingToken =
-        (await localforage.getItem<string>('fcm_token')) ?? ''
-      // sync with database, if user is exist and token is changed, then remove it
-      const myself = chatroomData.users.find(user => user.user_id === uid)
-      if (!!myself && myself.messaging_token !== messagingToken) {
-        await updateDoc(doc(db, 'chatrooms', chatroomId as string), {
-          users: arrayRemove(myself)
-        })
-      }
+      if (auth.currentUser && uid) {
+        const messagingToken =
+          (await localforage.getItem<string>('fcm_token')) ?? ''
+        // sync with database, if user is exist and token is changed, then remove it
+        const myself = chatroomData.users.find(user => user.user_id === uid)
+        if (!!myself && myself.messaging_token !== messagingToken) {
+          await updateDoc(doc(db, 'chatrooms', chatroomId as string), {
+            users: arrayRemove(myself)
+          })
+        }
 
-      const users: IUsers = {
-        user_id: uid,
-        user_name: auth.currentUser.displayName ?? '',
-        photo_url: auth.currentUser.photoURL ?? '',
-        messaging_token: messagingToken
-      }
-      await updateDoc(doc(db, 'chatrooms', chatroomId as string), {
-        users: arrayUnion(users),
-        messages: arrayUnion({
+        const users: IUsers = {
           user_id: uid,
-          user_name: auth.currentUser.displayName,
-          text: comment,
-          timestamp: Date.now()
+          user_name: auth.currentUser.displayName ?? '',
+          photo_url: auth.currentUser.photoURL ?? '',
+          messaging_token: messagingToken
+        }
+        await updateDoc(doc(db, 'chatrooms', chatroomId as string), {
+          users: arrayUnion(users),
+          messages: arrayUnion({
+            user_id: uid,
+            user_name: auth.currentUser.displayName,
+            text: comment,
+            timestamp: Date.now()
+          })
         })
-      })
-      sendNotification(comment)
-      setComment('')
-    } else {
-      handleLogin()
-    }
-  }, [
-    comment,
-    auth.currentUser,
-    uid,
-    chatroomData.users,
-    db,
-    chatroomId,
-    sendNotification,
-    handleLogin
-  ])
+        sendNotification(comment)
+      } else {
+        handleLogin()
+      }
+    },
+    [
+      auth.currentUser,
+      uid,
+      chatroomData.users,
+      db,
+      chatroomId,
+      sendNotification,
+      handleLogin
+    ]
+  )
 
   const handleBack = useCallback((): void => {
     !!viewportCenter ? back() : push('/')
@@ -316,7 +316,7 @@ const Chatroom = ({}: InferGetServerSidePropsType<
     <>
       {/* TODO: Custom head title */}
       <ChatroomHeader>
-        <span className='back-icon'>
+        <span className='back-icon' title='返回'>
           <ArrowIcon onClick={handleBack} />
         </span>
         <span className='chatroom-name'>{chatroomData.name}</span>
@@ -361,11 +361,7 @@ const Chatroom = ({}: InferGetServerSidePropsType<
           />
         ))}
       </ChatroomInner>
-      <MessageInputArea
-        comment={comment}
-        setComment={setComment}
-        sendMessage={sendMessage}
-      />
+      <MessageInputArea sendMessage={sendFCM} />
     </>
   )
 }
