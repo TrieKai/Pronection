@@ -24,6 +24,8 @@ import MessageInputArea from 'components/messageInputArea'
 import Button, { ButtonType } from 'components/button'
 import Spinner from 'components/spinner'
 import CountdownTimer from 'components/countdownTimer'
+import Modal from 'components/modal'
+import { UseAppSelector } from 'app/hooks'
 import SendNotification from 'util/sendNotification'
 import { FCMInit } from 'util/webPush/webPush'
 import { FirebaseInit } from 'util/firebase'
@@ -31,10 +33,6 @@ import { ONE_DAY } from 'assets/constant'
 import { ReactComponent as ArrowIcon } from 'assets/icon/arrow.svg'
 
 import { IFirebaseChatroom, IUsers } from 'types/common'
-
-interface IChatroom {
-  hostname: string | null
-}
 
 const DEFAULT_CHATROOM_DATA: IFirebaseChatroom = {
   create_at: 0,
@@ -129,9 +127,9 @@ const provider = new GoogleAuthProvider()
 
 const defaultAvatarPath = '/icon/no-photo.svg'
 
-const Chatroom = ({
-  hostname
-}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const Chatroom = ({}: InferGetServerSidePropsType<
+  typeof getServerSideProps
+>) => {
   const {
     back,
     query: { chatroomId },
@@ -147,6 +145,11 @@ const Chatroom = ({
   )
   const messageRefs = useRef<(HTMLDivElement | null)[]>([])
   const isScrollToBottom = useRef<boolean>(false)
+  const {
+    geolocation: { viewportCenter }
+  } = UseAppSelector(state => ({
+    geolocation: state.geolocation
+  }))
 
   const checkIsLoading = useCallback((): boolean => {
     return (
@@ -254,13 +257,8 @@ const Chatroom = ({
   ])
 
   const handleBack = useCallback((): void => {
-    if (!hostname) {
-      push('/')
-      return
-    }
-    const regex = new RegExp(hostname)
-    regex.test(document.referrer) ? back() : push('/')
-  }, [back, hostname, push])
+    !!viewportCenter ? back() : push('/')
+  }, [back, push, viewportCenter])
 
   useEffect(() => {
     if (chatroomId) {
@@ -342,11 +340,9 @@ const Chatroom = ({
             </div>
           </div>
         )}
-        {checkIsLoading() && (
-          <div className='spinner-container'>
-            <Spinner color='#c8d0ff' />
-          </div>
-        )}
+        <Modal show={checkIsLoading()} position={'center'}>
+          <Spinner />
+        </Modal>
         {chatroomData.messages.map((message, i) => (
           <Message
             ref={el => (messageRefs.current[i] = el)}
@@ -374,10 +370,7 @@ const Chatroom = ({
   )
 }
 
-export const getServerSideProps: GetServerSideProps<IChatroom> = async ({
-  query,
-  req
-}) => {
+export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const { chatroomId } = query
   FirebaseInit()
   const docRef = doc(getFirestore(), 'chatrooms', chatroomId as string)
@@ -388,7 +381,7 @@ export const getServerSideProps: GetServerSideProps<IChatroom> = async ({
   const isError = !docSnap.exists() || isExpired
 
   return {
-    props: { hostname: req.headers.host || null },
+    props: {},
     notFound: isError
   }
 }

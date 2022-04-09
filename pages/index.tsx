@@ -34,7 +34,7 @@ import { DEFAULT_POSITION, ONE_DAY } from 'assets/constant'
 import { ReactComponent as AddIcon } from 'assets/icon/add.svg'
 
 import { IFirebaseChatroom } from 'types/common'
-import { UpdateGeolocation } from 'features/geolocation'
+import { UpdateGeolocation, UpdateViewport } from 'features/geolocation'
 import { SetLoading } from 'features/loading'
 
 const HomeConatiner = styled.main``
@@ -142,7 +142,8 @@ const Home: NextPage = () => {
   }))
 
   const goToChatroom = useCallback(
-    async (user: User, latitude: number, longitude: number) => {
+    async (user: User, latitude: number, longitude: number): Promise<void> => {
+      dispatch(SetLoading(true))
       const data: IFirebaseChatroom = {
         name: chatroomName,
         create_at: Date.now(),
@@ -157,14 +158,23 @@ const Home: NextPage = () => {
         messages: [],
         position: new GeoPoint(latitude, longitude)
       }
-      const doc = await addDoc(collection(db, 'chatrooms'), data)
-      setChatRoomName('')
-      push(`/chatroom/${doc.id}`)
+      try {
+        const doc = await addDoc(collection(db, 'chatrooms'), data).catch(
+          error => {
+            throw new Error(error)
+          }
+        )
+        setChatRoomName('')
+        push(`/chatroom/${doc.id}`, undefined, { shallow: true })
+      } catch (error) {
+        console.log(error)
+      }
+      dispatch(SetLoading(false))
     },
-    [chatroomName, db, push]
+    [chatroomName, db, dispatch, push]
   )
 
-  const addChatroom = useCallback(async () => {
+  const addChatroom = useCallback(async (): Promise<void> => {
     if (chatroomName === '' || !position?.lat || !position.lng) return
 
     try {
@@ -187,13 +197,13 @@ const Home: NextPage = () => {
   }
 
   const inputOnChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
+    (e: React.ChangeEvent<HTMLInputElement>): void => {
       setChatRoomName(e.target.value)
     },
     []
   )
 
-  const openCreateRoom = useCallback(async () => {
+  const openCreateRoom = useCallback(async (): Promise<void> => {
     const handleMap = (lat: number, lng: number) => {
       map?.panTo({ lat, lng })
       setOpenChatroom(true)
@@ -219,7 +229,7 @@ const Home: NextPage = () => {
     dispatch(SetLoading(false))
   }, [dispatch, map, position?.lat, position?.lng])
 
-  const queryData = useCallback(async () => {
+  const queryData = useCallback(async (): Promise<void> => {
     // const NE = new GeoPoint(
     //   defaultPosition.lat + 0.001,
     //   defaultPosition.lng + 0.001
@@ -250,10 +260,15 @@ const Home: NextPage = () => {
     leave: { transform: 'translateY(200%)' }
   })
 
-  const mapOnChange = () => {
+  const mapOnChange = (): void => {
     const currLat = map?.getCenter().lat()
     const currLng = map?.getCenter().lng()
-    if (!!currLat && !!currLng) push({ query: { lat: currLat, lng: currLng } })
+    if (!!currLat && !!currLng) {
+      push({ query: { lat: currLat, lng: currLng } }, undefined, {
+        shallow: true
+      })
+      dispatch(UpdateViewport({ lat: currLat, lng: currLng }))
+    }
   }
 
   useEffect(() => {
@@ -297,9 +312,7 @@ const Home: NextPage = () => {
                   lng={data.position.longitude}
                   chatroomName={data.name}
                   href={`/chatroom/${chatroom.id}`}
-                  imageUrlList={data.users.map(item => {
-                    return item.photo_url
-                  })}
+                  imageUrlList={data.users.map(item => item.photo_url)}
                   key={chatroom.id}
                 />
               )
