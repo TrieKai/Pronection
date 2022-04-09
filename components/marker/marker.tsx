@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { Fragment, useCallback, useState } from 'react'
+import Link from 'next/link'
 import { a, useSpring } from '@react-spring/web'
 import styled from 'styled-components'
 
@@ -153,7 +154,7 @@ const Marker: React.VFC<IMarker & ICustomMarker> = ({
   }, [])
 
   return (
-    <a href={href}>
+    <Link href={href} passHref>
       <MarkerContainer
         style={markerAnimation}
         onMouseEnter={() => setIsHover(true)}
@@ -190,7 +191,7 @@ const Marker: React.VFC<IMarker & ICustomMarker> = ({
         ))}
         {remainUserNum > 0 && <div className='number'>+{remainUserNum}</div>}
       </MarkerContainer>
-    </a>
+    </Link>
   )
 }
 
