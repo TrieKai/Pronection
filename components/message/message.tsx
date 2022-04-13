@@ -45,7 +45,7 @@ const MessageContainer = styled.div<IMessageContainerStyles>`
     grid-area: username;
     margin-bottom: 4px;
     text-align: ${({ isSelf }) => (isSelf ? 'right' : 'left')};
-    color: #9e9e9e;
+    color: ${({ theme }) => theme.gray1};
   }
 
   .message {
@@ -60,9 +60,11 @@ const MessageContainer = styled.div<IMessageContainerStyles>`
       border-radius: 4px;
       font-size: 18px;
       line-height: 22px;
-      background: ${({ isSelf }) => (isSelf ? '#91a0fb' : '#ececec')};
-      color: ${({ isSelf }) => (isSelf ? '#fafafa' : '#314146')};
-      border: ${({ isSelf }) => (isSelf ? '#8b9aff' : '#e2e9ec')} solid 1px;
+      background: ${({ isSelf, theme }) =>
+        isSelf ? theme.blue1 : theme.white3};
+      color: ${({ isSelf, theme }) => (isSelf ? theme.white2 : theme.blue4)};
+      border: ${({ isSelf, theme }) => (isSelf ? theme.blue2 : theme.white4)}
+        solid 1px;
       word-break: break-word;
     }
   }

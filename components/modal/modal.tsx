@@ -2,6 +2,7 @@ import { MouseEvent, useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { a, useTransition } from '@react-spring/web'
 import styled from 'styled-components'
+import { MainTheme } from 'styles/theme'
 
 type position = 'flex-start' | 'center' | 'flex-end'
 
@@ -21,7 +22,7 @@ const ModalOverlay = styled(a.div)<IModalOverlayStyle>`
   flex-direction: column;
   justify-content: ${({ position }) => position};
   align-items: center;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: ${({ theme }) => theme.black2};
   z-index: 2;
 `
 
@@ -49,9 +50,9 @@ const Modal: React.FC<ModalProps> = ({
   }
 
   const overlaysTransitions = useTransition(show, {
-    from: { background: 'rgba(0, 0, 0, 0)' },
-    enter: { background: 'rgba(0, 0, 0, 0.5)' },
-    leave: { background: 'rgba(0, 0, 0, 0)' }
+    from: { background: MainTheme.black3 },
+    enter: { background: MainTheme.black2 },
+    leave: { background: MainTheme.black3 }
   })
 
   return isBrowser ? (

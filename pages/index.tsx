@@ -50,7 +50,7 @@ const AddBox = styled.span`
   align-items: center;
   width: 60px;
   height: 60px;
-  background: #6777e2;
+  background: ${({ theme }) => theme.blue3};
   border-radius: 100%;
   transform: translateX(-50%);
   box-shadow: 0px 3px 1px -2px rgb(0 0 0 / 20%),
@@ -59,11 +59,11 @@ const AddBox = styled.span`
   cursor: pointer;
 
   &:hover {
-    background: #5668df;
+    background: ${({ theme }) => theme.blue6};
   }
 
   svg [data-class='cls-1'] {
-    fill: white;
+    fill: ${({ theme }) => theme.white1};
   }
 `
 
@@ -74,7 +74,7 @@ const CreateRoomContainer = styled(a.div)`
   padding: 20px;
   width: 100%;
   height: 200px;
-  background: #fff;
+  background: ${({ theme }) => theme.white1};
   border-radius: 20px 20px 0 0;
 
   @media screen and (max-width: 768px) {
@@ -101,14 +101,14 @@ const CreateRoomContainer = styled(a.div)`
       width: 100%;
       height: 30px;
       appearance: none;
-      color: #314146;
-      border: solid 1px rgba(40, 70, 80, 0.6);
+      color: ${({ theme }) => theme.blue4};
+      border: solid 1px ${({ theme }) => theme.blue5};
       border-radius: 4px;
       transition: all 0.3s;
 
       &:hover,
       &:focus {
-        border-color: #6777e2;
+        border-color: ${({ theme }) => theme.blue3};
       }
     }
   }

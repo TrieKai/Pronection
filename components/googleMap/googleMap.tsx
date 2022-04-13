@@ -36,24 +36,24 @@ const ControlContainer = styled.div`
     margin: 12px;
     width: 32px;
     height: 32px;
-    background: #fff;
+    background: ${({ theme }) => theme.white1};
     border-radius: 100%;
     -webkit-tap-highlight-color: transparent;
     cursor: pointer;
 
     svg [data-class='cls-1'] {
-      fill: #314146;
+      fill: ${({ theme }) => theme.blue4};
     }
 
     @media not screen and (hover: none) {
       &:hover svg [data-class='cls-1'] {
-        fill: rgba(40, 70, 80, 0.6);
+        fill: ${({ theme }) => theme.blue5};
       }
     }
 
     @media screen and (hover: none) {
       &:active svg [data-class='cls-1'] {
-        fill: rgba(40, 70, 80, 0.6);
+        fill: ${({ theme }) => theme.blue5};
       }
     }
   }

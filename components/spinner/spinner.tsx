@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { MainTheme } from 'styles/theme'
 
 interface ISpinner {
   color?: string
@@ -47,7 +48,9 @@ const SpinnerContainer = styled.div<ISpinner>`
   }
 `
 
-const Spinner: React.VFC<ISpinner> = ({ color = '#fff' }): JSX.Element => (
+const Spinner: React.VFC<ISpinner> = ({
+  color = MainTheme.white1
+}): JSX.Element => (
   <SpinnerContainer color={color}>
     <div></div>
     <div></div>

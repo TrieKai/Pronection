@@ -32,7 +32,7 @@ const MarkerContainer = styled(a.div)`
     left: calc(4px + ${avatarSize / 2}px);
     width: calc(100% - ${imageBoxSize / 2 + avatarSize}px);
     height: calc(100% - 8px);
-    background: #fff;
+    background: ${({ theme }) => theme.white1};
   }
 
   .image-box {
@@ -44,7 +44,7 @@ const MarkerContainer = styled(a.div)`
       width: ${avatarSize + avatarBorder * 2}px;
       height: ${avatarSize + avatarBorder * 2}px;
       border-radius: 100%;
-      border: ${avatarBorder}px solid #fff;
+      border: ${avatarBorder}px solid ${({ theme }) => theme.white1};
     }
   }
 
@@ -59,9 +59,9 @@ const MarkerContainer = styled(a.div)`
     width: ${avatarSize + avatarBorder * 2}px;
     height: ${avatarSize + avatarBorder * 2}px;
     font-size: 20px;
-    background: #91a0fb;
+    background: ${({ theme }) => theme.blue1};
     border-radius: 100%;
-    color: #fff;
+    color: ${({ theme }) => theme.white1};
     z-index: 1;
   }
 `
@@ -87,7 +87,8 @@ export const InfoWindowContainer = styled.div`
     left: calc(50% + 8px);
     border-style: solid;
     border-width: 6px 9px 0 0;
-    border-color: #cae0e8 transparent transparent transparent;
+    border-color: ${({ theme }) => theme.white6} transparent transparent
+      transparent;
   }
 
   &::after {
@@ -95,15 +96,16 @@ export const InfoWindowContainer = styled.div`
     left: calc(50% + 9px);
     border-style: solid;
     border-width: 5px 7px 0 0;
-    border-color: #fff transparent transparent transparent;
+    border-color: ${({ theme }) => theme.white1} transparent transparent
+      transparent;
   }
 
   .inner {
     padding: 5px 7px;
     width: 100%;
     height: 100%;
-    background: #fff;
-    border: 1px solid #cae0e8;
+    background: ${({ theme }) => theme.white1};
+    border: 1px solid ${({ theme }) => theme.white6};
     border-radius: 12px;
 
     .text {

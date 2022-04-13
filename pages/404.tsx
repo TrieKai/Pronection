@@ -8,7 +8,7 @@ const Custom404Container = styled.div`
 
   .top {
     margin-bottom: 4px;
-    color: #314146;
+    color: ${({ theme }) => theme.blue4};
     font-size: 18px;
     font-weight: 600;
     line-height: 22px;
@@ -16,7 +16,7 @@ const Custom404Container = styled.div`
   }
 
   .down {
-    color: #28465099;
+    color: ${({ theme }) => theme.blue12};
     line-height: 18px;
     font-size: 14px;
     text-align: center;

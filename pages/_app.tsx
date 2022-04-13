@@ -3,12 +3,14 @@ import Head from 'next/head'
 import { Wrapper } from 'app/store'
 import { FirebaseInit } from 'util/firebase'
 import '../styles/globals.css'
+import { ThemeProvider } from 'styled-components'
+import { MainTheme } from '../styles/theme'
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
   FirebaseInit()
 
   return (
-    <>
+    <ThemeProvider theme={MainTheme}>
       <Head>
         <meta charSet='utf-8' />
         <meta httpEquiv='X-UA-Compatible' content='IE=edge' />
@@ -34,10 +36,10 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
           sizes='32x32'
         />
         <link rel='apple-touch-icon' href='/location-pin.png'></link>
-        <meta name='theme-color' content='#317EFB' />
+        <meta name='theme-color' content='#317efb' />
       </Head>
       <Component {...pageProps} />
-    </>
+    </ThemeProvider>
   )
 }
 

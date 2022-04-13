@@ -27,7 +27,7 @@ const SendContainer = styled.div`
     margin-left: 4px;
     width: 40px;
     height: 40px;
-    background: #91a0fb;
+    background: ${({ theme }) => theme.blue1};
     border-radius: 100%;
     -webkit-tap-highlight-color: transparent;
     cursor: pointer;

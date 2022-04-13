@@ -8,16 +8,16 @@ const CompassContainer = styled.div`
   justify-content: center;
   width: 40px;
   height: 40px;
-  background: radial-gradient(rgba(66, 132, 243, 0.6), rgba(66, 132, 243, 0));
+  background: radial-gradient(${({ theme }) => theme.blue11}, transparent);
   border-radius: 100%;
   transform: translate3d(-50%, -50%, 0);
 
   .inner {
     width: 16px;
     height: 16px;
-    background: #4284f3;
+    background: ${({ theme }) => theme.blue10};
     border-radius: 100%;
-    border: 2px solid white;
+    border: 2px solid ${({ theme }) => theme.white1};
   }
 `
 

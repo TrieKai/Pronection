@@ -20,17 +20,17 @@ const ButtonContainer = styled.div<IButtonStyles>`
   font-size: 18px;
   font-weight: 500;
   line-height: 24px;
-  background: ${({ type }) =>
-    type === ButtonType.primary ? '#91a0fb' : 'transparent'};
-  border: ${({ type }) =>
-    type === ButtonType.primary ? 'unset' : '#fff 2px solid'};
-  color: #fff;
+  background: ${({ type, theme }) =>
+    type === ButtonType.primary ? theme.blue1 : 'transparent'};
+  border: ${({ type, theme }) =>
+    type === ButtonType.primary ? 'unset' : `${theme.white1} 2px solid`};
+  color: ${({ theme }) => theme.white1};
   -webkit-tap-highlight-color: transparent;
   cursor: pointer;
 
   &:hover {
-    background: ${({ type }) =>
-      type === ButtonType.primary ? '#8392f8' : 'unset'};
+    background: ${({ type, theme }) =>
+      type === ButtonType.primary ? theme.blue9 : 'unset'};
   }
 `
 

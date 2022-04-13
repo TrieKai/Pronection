@@ -63,7 +63,7 @@ const ChatroomHeader = styled.div`
       transform: scaleX(-1);
 
       [data-class='cls-2'] {
-        fill: #314146;
+        fill: ${({ theme }) => theme.blue4};
       }
     }
   }
@@ -81,8 +81,8 @@ const ChatroomTimer = styled.div`
   justify-content: center;
   width: 100%;
   height: ${timerHeight}px;
-  background: #535faa;
-  color: #fff;
+  background: ${({ theme }) => theme.blue7};
+  color: ${({ theme }) => theme.white1};
   font-size: 24px;
 `
 
@@ -93,7 +93,7 @@ const ChatroomInner = styled.div`
   height: calc(
     100% - ${headerHeight}px - ${timerHeight}px - ${messageInputHeight}px
   );
-  background: #f5f8f9;
+  background: ${({ theme }) => theme.white5};
   overflow-y: auto;
 
   .top-bar {
@@ -106,9 +106,9 @@ const ChatroomInner = styled.div`
     justify-content: center;
     width: 100%;
     height: 56px;
-    background: #91a0fb;
-    color: #fff;
-    border-bottom: 1px solid #8898ff;
+    background: ${({ theme }) => theme.blue1};
+    color: ${({ theme }) => theme.white1};
+    border-bottom: 1px solid ${({ theme }) => theme.blue8};
 
     .button-box {
       margin-left: 8px;
