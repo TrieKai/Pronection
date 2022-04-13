@@ -1,4 +1,11 @@
 import { themes } from '@storybook/theming'
+import { addDecorator } from '@storybook/react'
+import { withThemesProvider } from 'storybook-addon-styled-component-theme'
+import { ThemeProvider } from 'styled-components'
+import { MainTheme } from '../styles/theme'
+
+const customThemes = [MainTheme]
+addDecorator(withThemesProvider(customThemes), ThemeProvider)
 
 export const parameters = {
   actions: { argTypesRegex: '^on[A-Z].*' },

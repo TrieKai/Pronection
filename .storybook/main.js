@@ -9,7 +9,8 @@ module.exports = {
   addons: [
     '@storybook/addon-links',
     '@storybook/addon-essentials',
-    'storybook-dark-mode'
+    'storybook-dark-mode',
+    'storybook-addon-styled-component-theme/dist/preset'
   ],
   framework: '@storybook/react',
   webpackFinal: async config => {
