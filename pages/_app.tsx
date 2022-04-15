@@ -36,7 +36,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
           sizes='32x32'
         />
         <link rel='apple-touch-icon' href='/location-pin.png'></link>
-        <meta name='theme-color' content='#317efb' />
+        <meta name='theme-color' content={MainTheme.blue3} />
       </Head>
       <Component {...pageProps} />
     </ThemeProvider>
