@@ -1,8 +1,29 @@
 import styled from 'styled-components'
+import Link from 'next/link'
+import Image from 'next/image'
+
+const logoSize = 44
+
+const Header = styled.header`
+  display: flex;
+  align-items: center;
+  height: 64px;
+  border-bottom: 1px solid ${({ theme }) => theme.white3};
+
+  .logo-wrapper {
+    margin: 0 12px;
+    -webkit-tap-highlight-color: transparent;
+    cursor: pointer;
+  }
+
+  .logo-text {
+    font-size: 22px;
+  }
+`
 
 const Custom404Container = styled.div`
   position: absolute;
-  top: 25%;
+  top: 35%;
   right: 0;
   left: 0;
 
@@ -26,6 +47,19 @@ const Custom404Container = styled.div`
 const Custom404 = () => {
   return (
     <>
+      <Header>
+        <Link href='/' passHref>
+          <div className='logo-wrapper'>
+            <Image
+              src='/location-pin.png'
+              width={logoSize}
+              height={logoSize}
+              alt='logo'
+            />
+          </div>
+        </Link>
+        <span className='logo-text'>Pronection</span>
+      </Header>
       <Custom404Container>
         <div className='top'>Sorry, something went wrong.</div>
         <div className='down'>
