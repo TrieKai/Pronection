@@ -1,5 +1,6 @@
 import { createRef, useCallback, useEffect, useRef, useState } from 'react'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import Head from 'next/head'
 import { useRouter } from 'next/router'
 import {
   arrayRemove,
@@ -33,6 +34,12 @@ import { ONE_DAY } from 'assets/constant'
 import { ReactComponent as ArrowIcon } from 'assets/icon/arrow.svg'
 
 import { IFirebaseChatroom, IUsers } from 'types/common'
+
+interface IChatroom {
+  chatroomName: string
+  logoURL: string
+  originURL: string
+}
 
 const DEFAULT_CHATROOM_DATA: IFirebaseChatroom = {
   create_at: 0,
@@ -127,9 +134,11 @@ const provider = new GoogleAuthProvider()
 
 const defaultAvatarPath = '/icon/no-photo.svg'
 
-const Chatroom = ({}: InferGetServerSidePropsType<
-  typeof getServerSideProps
->) => {
+const Chatroom = ({
+  chatroomName,
+  logoURL,
+  originURL
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const {
     back,
     query: { chatroomId },
@@ -314,7 +323,20 @@ const Chatroom = ({}: InferGetServerSidePropsType<
 
   return (
     <>
-      {/* TODO: Custom head title */}
+      <Head>
+        <title>{`Pronection | ${chatroomName}`}</title>
+        <meta name='title' content={`Pronection | ${chatroomName}`} />
+        <meta property='og:type' content='website' />
+        <meta property='og:url' content={originURL} />
+        <meta property='og:title' content={`Pronection | ${chatroomName}`} />
+        <meta property='og:image' content={logoURL} />
+        <meta property='twitter:url' content={originURL} />
+        <meta
+          property='twitter:title'
+          content={`Pronection | ${chatroomName}`}
+        />
+        <meta property='twitter:image' content={logoURL} />
+      </Head>
       <ChatroomHeader>
         <span className='back-icon' title='返回'>
           <ArrowIcon onClick={handleBack} />
@@ -366,18 +388,22 @@ const Chatroom = ({}: InferGetServerSidePropsType<
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+export const getServerSideProps: GetServerSideProps<IChatroom> = async ({
+  query,
+  req
+}) => {
   const { chatroomId } = query
   FirebaseInit()
   const docRef = doc(getFirestore(), 'chatrooms', chatroomId as string)
   const docSnap = await getDoc(docRef)
   const data = docSnap.data() as IFirebaseChatroom
+  const logoURL = `https://${req.headers.host}/location-pin.png`
+  const originURL = `https://${req.headers.host}${req.url}`
   const isExpired = (data?.create_at ?? 0) < new Date().getTime() - ONE_DAY
-
   const isError = !docSnap.exists() || isExpired
 
   return {
-    props: {},
+    props: { chatroomName: data.name, logoURL: logoURL, originURL },
     notFound: isError
   }
 }

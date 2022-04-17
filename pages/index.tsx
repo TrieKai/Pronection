@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import type { NextPage } from 'next'
+import type { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import {
@@ -36,6 +36,11 @@ import { ReactComponent as AddIcon } from 'assets/icon/add.svg'
 import { IFirebaseChatroom } from 'types/common'
 import { UpdateGeolocation, UpdateViewport } from 'features/geolocation'
 import { SetLoading } from 'features/loading'
+
+interface IHome {
+  logoURL: string
+  originURL: string
+}
 
 const HomeConatiner = styled.main``
 
@@ -121,7 +126,10 @@ const CreateRoomContainer = styled(a.div)`
   }
 `
 
-const Home: NextPage = () => {
+const Home = ({
+  logoURL,
+  originURL
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const { query: routerQuery, push } = useRouter()
   const { lat: urlLat, lng: urlLng } = routerQuery
   const auth = getAuth()
@@ -285,9 +293,10 @@ const Home: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Pronection</title>
-        <meta name='description' content='Chat with people nearby' />
-        <link rel='icon' href='/location-pin.png' />
+        <meta property='og:url' content={originURL} />
+        <meta property='og:image' content={logoURL} />
+        <meta property='twitter:url' content={originURL} />
+        <meta property='twitter:image' content={logoURL} />
       </Head>
       <HomeConatiner>
         <GoogleMap
@@ -363,6 +372,17 @@ const Home: NextPage = () => {
       </HomeConatiner>
     </>
   )
+}
+
+export const getServerSideProps: GetServerSideProps<IHome> = async ({
+  req
+}) => {
+  const logoURL = `https://${req.headers.host}/location-pin.png`
+  const originURL = `https://${req.headers.host}${req.url}`
+
+  return {
+    props: { logoURL: logoURL, originURL }
+  }
 }
 
 export default Home

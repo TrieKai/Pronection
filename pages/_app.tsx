@@ -18,9 +18,18 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
           name='viewport'
           content='width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no'
         />
+        <title>Pronection</title>
         <meta name='description' content='Chat with people nearby' />
         <meta name='keywords' content='chat map' />
-        <title>Pronection</title>
+        <meta property='og:type' content='website' />
+        <meta property='og:title' content='Pronection' />
+        <meta property='og:description' content='Chat with people nearby' />
+        <meta property='twitter:card' content='summary' />
+        <meta property='twitter:title' content='Pronection' />
+        <meta
+          property='twitter:description'
+          content='Chat with people nearby'
+        />
 
         <link rel='manifest' href='/manifest.json' />
         <link
