@@ -5,3 +5,5 @@ export const DEFAULT_POSITION: google.maps.LatLngLiteral = {
 }
 
 export const ONE_DAY = 1000 * 60 * 60 * 24
+
+export const DEFAULT_AVATAR_PATH = '/icon/no-photo.svg'
