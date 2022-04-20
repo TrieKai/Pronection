@@ -1,6 +1,6 @@
-/* eslint-disable @next/next/no-img-element */
 import { forwardRef } from 'react'
 import styled from 'styled-components'
+import HeadShot from 'components/headShot/headShot'
 
 interface IMessageContainerStyles {
   isSelf: boolean
@@ -13,6 +13,8 @@ interface IMessage {
   text: string
   time: number
 }
+
+const headShotSize = 44
 
 const MessageContainer = styled.div<IMessageContainerStyles>`
   display: grid;
@@ -84,7 +86,12 @@ const Message = forwardRef<HTMLDivElement, IMessage>(
     return (
       <MessageContainer ref={ref} isSelf={isSelf}>
         <span className='avatar'>
-          <img src={userAvatarUrl} title={userName} alt='avatar' />
+          <HeadShot
+            headShotURL={userAvatarUrl}
+            width={headShotSize}
+            height={headShotSize}
+            title={userName}
+          />
         </span>
         <span className='username'>{userName}</span>
         <div className='message'>

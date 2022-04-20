@@ -30,7 +30,7 @@ import { UseAppSelector } from 'app/hooks'
 import SendNotification from 'util/sendNotification'
 import { FCMInit } from 'util/webPush/webPush'
 import { FirebaseInit } from 'util/firebase'
-import { ONE_DAY } from 'assets/constant'
+import { ONE_DAY, DEFAULT_AVATAR_PATH } from 'assets/constant'
 import { ReactComponent as ArrowIcon } from 'assets/icon/arrow.svg'
 
 import { IFirebaseChatroom, IUsers } from 'types/common'
@@ -131,8 +131,6 @@ const ChatroomInner = styled.div`
 `
 
 const provider = new GoogleAuthProvider()
-
-const defaultAvatarPath = '/icon/no-photo.svg'
 
 const Chatroom = ({
   chatroomName,
@@ -371,11 +369,11 @@ const Chatroom = ({
             isSelf={message.user_id === uid}
             userAvatarUrl={
               chatroomData.users.find(item => item.user_id === message.user_id)
-                ?.photo_url ?? defaultAvatarPath
+                ?.photo_url ?? DEFAULT_AVATAR_PATH
             }
             userName={
               chatroomData.users.find(item => item.user_id === message.user_id)
-                ?.user_name ?? defaultAvatarPath
+                ?.user_name ?? ''
             }
             text={message.text}
             time={message.timestamp}

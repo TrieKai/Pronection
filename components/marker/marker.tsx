@@ -3,6 +3,7 @@ import { Fragment, useCallback, useState } from 'react'
 import Link from 'next/link'
 import { a, useSpring } from '@react-spring/web'
 import styled from 'styled-components'
+import HeadShot from 'components/headShot/headShot'
 
 import { IMarker } from 'types/common'
 
@@ -39,12 +40,11 @@ const MarkerContainer = styled(a.div)`
     display: flex;
     width: ${imageBoxSize}px;
     z-index: 1;
+    border-radius: 100%;
+    border: ${avatarBorder}px solid ${({ theme }) => theme.white1};
 
     img {
-      width: ${avatarSize + avatarBorder * 2}px;
-      height: ${avatarSize + avatarBorder * 2}px;
       border-radius: 100%;
-      border: ${avatarBorder}px solid ${({ theme }) => theme.white1};
     }
   }
 
@@ -186,7 +186,11 @@ const Marker: React.VFC<IMarker & ICustomMarker> = ({
                     : ''
                 }`}
               >
-                <img src={imageUrl} alt='avatar' />
+                <HeadShot
+                  headShotURL={imageUrl}
+                  width={avatarSize + avatarBorder * 2}
+                  height={avatarSize + avatarBorder * 2}
+                />
               </div>
             )}
           </Fragment>
