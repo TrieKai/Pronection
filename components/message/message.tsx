@@ -1,6 +1,7 @@
 import { forwardRef } from 'react'
 import styled from 'styled-components'
 import HeadShot from 'components/headShot/headShot'
+import ConvertURLToLink from 'util/convertURLToLink'
 
 interface IMessageContainerStyles {
   isSelf: boolean
@@ -59,6 +60,7 @@ const MessageContainer = styled.div<IMessageContainerStyles>`
     .text {
       padding: 8px 10px;
       max-width: 200px;
+      height: 100%;
       border-radius: 4px;
       font-size: 18px;
       line-height: 22px;
@@ -68,6 +70,11 @@ const MessageContainer = styled.div<IMessageContainerStyles>`
       border: ${({ isSelf, theme }) => (isSelf ? theme.blue2 : theme.white4)}
         solid 1px;
       word-break: break-word;
+
+      a {
+        color: ${({ theme }) => theme.blue3};
+        text-decoration: underline;
+      }
     }
   }
 
@@ -95,7 +102,10 @@ const Message = forwardRef<HTMLDivElement, IMessage>(
         </span>
         <span className='username'>{userName}</span>
         <div className='message'>
-          <div className='text'>{text}</div>
+          <div
+            className='text'
+            dangerouslySetInnerHTML={{ __html: ConvertURLToLink(text) }}
+          />
         </div>
         <div className='time'>{new Date(time).toLocaleTimeString()}</div>
       </MessageContainer>
