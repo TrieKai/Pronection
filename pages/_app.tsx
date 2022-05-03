@@ -1,5 +1,6 @@
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
+import Script from 'next/script'
 import { Wrapper } from 'app/store'
 import { FirebaseInit } from 'util/firebase'
 import '../styles/globals.css'
@@ -47,6 +48,19 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
         <link rel='apple-touch-icon' href='/location-pin.png'></link>
         <meta name='theme-color' content={MainTheme.blue3} />
       </Head>
+      <Script
+        src='https://www.googletagmanager.com/gtag/js?id=G-4BQLCTY1M2'
+        strategy='afterInteractive'
+      />
+      <Script id='google-analytics' strategy='afterInteractive'>
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){window.dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', 'G-4BQLCTY1M2');
+        `}
+      </Script>
       <Component {...pageProps} />
     </ThemeProvider>
   )
