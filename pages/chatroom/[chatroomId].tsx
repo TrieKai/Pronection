@@ -116,6 +116,7 @@ const ChatroomInner = styled.div`
     background: ${({ theme }) => theme.blue1};
     color: ${({ theme }) => theme.white1};
     border-bottom: 1px solid ${({ theme }) => theme.blue8};
+    z-index: 1;
 
     .button-box {
       margin-left: 8px;
