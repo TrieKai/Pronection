@@ -7,7 +7,7 @@ import '../styles/globals.css'
 import { ThemeProvider } from 'styled-components'
 import { MainTheme } from '../styles/theme'
 
-const MyApp = ({ Component, pageProps }: AppProps) => {
+const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
   FirebaseInit()
 
   return (

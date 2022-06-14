@@ -10,7 +10,7 @@ const firebaseConfig: FirebaseOptions = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 }
 
-export const FirebaseInit = () => {
+export const FirebaseInit = (): void => {
   try {
     getApp()
     return

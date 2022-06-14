@@ -129,7 +129,7 @@ const CreateRoomContainer = styled(a.div)`
 const Home = ({
   logoURL,
   originURL
-}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+}: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element => {
   const { query: routerQuery, push } = useRouter()
   const { lat: urlLat, lng: urlLng } = routerQuery
   const auth = getAuth()

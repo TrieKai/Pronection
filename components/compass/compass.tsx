@@ -21,7 +21,7 @@ const CompassContainer = styled.div`
   }
 `
 
-const Compass: React.VFC<IMarker> = () => {
+const Compass: React.VFC<IMarker> = (): JSX.Element => {
   return (
     <CompassContainer>
       <div className='inner' />

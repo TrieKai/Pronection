@@ -44,7 +44,7 @@ const Custom404Container = styled.div`
   }
 `
 
-const Custom404 = () => {
+const Custom404 = (): JSX.Element => {
   return (
     <>
       <Header>

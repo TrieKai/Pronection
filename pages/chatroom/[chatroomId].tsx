@@ -137,7 +137,7 @@ const Chatroom = ({
   chatroomName,
   logoURL,
   originURL
-}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+}: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element => {
   const {
     back,
     query: { chatroomId },

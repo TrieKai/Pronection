@@ -3,11 +3,9 @@ import localforage from 'localforage'
 
 const tokenInlocalforage = () => localforage.getItem('fcm_token')
 
-export const FCMInit = async () => {
+export const FCMInit = async (): Promise<false | undefined> => {
   try {
-    if ((await tokenInlocalforage()) !== null) {
-      return false
-    }
+    if ((await tokenInlocalforage()) !== null) return false
 
     const messaging = getMessaging()
     await Notification.requestPermission()
