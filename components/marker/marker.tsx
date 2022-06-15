@@ -14,7 +14,7 @@ interface ICustomMarker {
   maxVisibleUserNumber?: number
 }
 
-const avatarSize = 48
+const avatarSize = 44
 const imageBoxSize = 30
 const avatarBorder = 2
 
@@ -38,7 +38,7 @@ const MarkerContainer = styled(a.div)`
 
   .image-box {
     display: flex;
-    width: ${imageBoxSize}px;
+    width: ${avatarSize + avatarBorder * 2}px;
     z-index: 1;
     border-radius: 100%;
     border: ${avatarBorder}px solid ${({ theme }) => theme.white1};
@@ -46,10 +46,6 @@ const MarkerContainer = styled(a.div)`
     img {
       border-radius: 100%;
     }
-  }
-
-  .last {
-    width: ${avatarSize + avatarBorder * 2}px;
   }
 
   .number {
@@ -176,16 +172,10 @@ const Marker: React.VFC<IMarker & ICustomMarker> = ({
             <div className='text'>{chatroomName}</div>
           </div>
         </InfoWindowContainer>
-        {imageUrlList.map((imageUrl, i, _self) => (
+        {imageUrlList.map((imageUrl, i) => (
           <Fragment key={i}>
             {i < maxVisibleUserNumber && (
-              <div
-                className={`image-box ${
-                  _self.length <= maxVisibleUserNumber && i === _self.length - 1
-                    ? 'last'
-                    : ''
-                }`}
-              >
+              <div className='image-box'>
                 <HeadShot
                   headShotURL={imageUrl}
                   width={avatarSize + avatarBorder * 2}
